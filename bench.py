@@ -1,32 +1,59 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import argparse, contextlib, datetime as dt, json, subprocess, sys, time, urllib.parse, urllib.request
+import os
+import sys
+from pathlib import Path
+
+# Always use the project virtual environment when it exists.
+ROOT = Path(__file__).resolve().parent
+VENV_PY = ROOT / ".venv" / "bin" / "python"
+if VENV_PY.exists() and Path(sys.executable).resolve() != VENV_PY.resolve():
+    os.execv(str(VENV_PY), [str(VENV_PY), str(Path(__file__).resolve()), *sys.argv[1:]])
+
+import argparse
+import contextlib
+import datetime as dt
+import json
+import subprocess
+import sys
+import time
+import urllib.error
+import urllib.request
 from pathlib import Path
 from typing import Any
 
 TERMINAL = {"done", "failed", "needs-review"}
+
 
 class Tee:
     def __init__(self, path: Path):
         self.path = path
         self.file = path.open("w", encoding="utf-8", buffering=1)
         self.stdout = sys.__stdout__
+
     def write(self, data: str) -> int:
-        self.stdout.write(data); self.file.write(data); return len(data)
+        self.stdout.write(data)
+        self.file.write(data)
+        return len(data)
+
     def flush(self) -> None:
-        self.stdout.flush(); self.file.flush()
+        self.stdout.flush()
+        self.file.flush()
+
     def close(self) -> None:
         self.file.close()
+
 
 def log_path(prefix: str, requested: str | None) -> Path:
     if requested:
         p = Path(requested)
     else:
-        Path("logs").mkdir(exist_ok=True)
-        p = Path("logs") / f"{prefix}_{dt.datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+        (ROOT / "logs").mkdir(exist_ok=True)
+        p = ROOT / "logs" / f"{prefix}_{dt.datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
     p.parent.mkdir(parents=True, exist_ok=True)
     return p
+
 
 def http_json(method: str, url: str, payload: dict[str, Any] | None = None, timeout: float = 240) -> Any:
     data = None
@@ -39,20 +66,28 @@ def http_json(method: str, url: str, payload: dict[str, Any] | None = None, time
         body = resp.read().decode("utf-8", "replace")
         return json.loads(body) if body else {}
 
+
 def nvidia_smi() -> str:
     try:
-        return subprocess.check_output([
-            "nvidia-smi",
-            "--query-gpu=name,memory.used,memory.total,utilization.gpu,power.draw,temperature.gpu",
-            "--format=csv,noheader,nounits",
-        ], text=True, stderr=subprocess.STDOUT, timeout=8).strip()
+        return subprocess.check_output(
+            [
+                "nvidia-smi",
+                "--query-gpu=name,memory.used,memory.total,utilization.gpu,power.draw,temperature.gpu",
+                "--format=csv,noheader,nounits",
+            ],
+            text=True,
+            stderr=subprocess.STDOUT,
+            timeout=8,
+        ).strip()
     except Exception as exc:
         return f"nvidia-smi unavailable: {exc!r}"
+
 
 def header(name: str) -> None:
     print("\n" + "=" * 80)
     print(name)
     print("=" * 80)
+
 
 def wait_job(base: str, job_id: str, poll: float, timeout: float) -> dict[str, Any]:
     deadline = time.time() + timeout
@@ -68,6 +103,7 @@ def wait_job(base: str, job_id: str, poll: float, timeout: float) -> dict[str, A
         time.sleep(poll)
     raise TimeoutError(f"job {job_id} timed out after {timeout}s")
 
+
 def run_job(base: str, name: str, payload: dict[str, Any], poll: float, timeout: float) -> dict[str, Any]:
     header(name)
     print("VRAM before:", nvidia_smi())
@@ -80,15 +116,16 @@ def run_job(base: str, name: str, payload: dict[str, Any], poll: float, timeout:
             raise RuntimeError(f"No job id returned: {job}")
         print("submitted:", job_id)
         final = wait_job(base, job_id, poll, timeout)
-        elapsed = time.time() - started
-        result.update({
-            "ok": final.get("status") == "done",
-            "seconds": elapsed,
-            "status": final.get("status"),
-            "job_id": job_id,
-            "artifact_url": f"{base}/api/v1/manager/jobs/{job_id}/artifact" if final.get("artifact") or final.get("image_path") else None,
-            "detail": final.get("result_text") or final.get("error") or final.get("user_message") or "",
-        })
+        result.update(
+            {
+                "ok": final.get("status") == "done",
+                "seconds": time.time() - started,
+                "status": final.get("status"),
+                "job_id": job_id,
+                "artifact_url": f"{base}/api/v1/manager/jobs/{job_id}/artifact" if final.get("artifact") or final.get("image_path") else None,
+                "detail": final.get("result_text") or final.get("error") or final.get("user_message") or "",
+            }
+        )
         print("VRAM after:", nvidia_smi())
         print("result:", result["status"])
         if result["artifact_url"]:
@@ -101,27 +138,55 @@ def run_job(base: str, name: str, payload: dict[str, Any], poll: float, timeout:
         print("VRAM after:", nvidia_smi())
     return result
 
+
 def run(args: argparse.Namespace) -> int:
     base = args.base.rstrip("/")
     results = []
     header("SyMoNeuRaL_ML Benchmark")
     print("started:", dt.datetime.now().isoformat(timespec="seconds"))
+    print("root:", ROOT)
+    print("python:", sys.executable)
     print("base:", base)
     print("log:", args.log_file)
+
     header("Health")
-    health = http_json("GET", f"{base}/api/v1/health", timeout=30)
-    print(json.dumps(health, indent=2)[:6000])
+    try:
+        health = http_json("GET", f"{base}/api/v1/health", timeout=30)
+        print(json.dumps(health, indent=2)[:6000])
+    except urllib.error.URLError as exc:
+        print(f"SERVER_NOT_REACHABLE: {exc!r}")
+        print("Start the server in another terminal:")
+        print("  ./scripts/start_exclusive_16gb.sh")
+        json_path = Path(str(args.log_file).replace(".log", ".json"))
+        json_path.write_text(json.dumps({"failures": 1, "error": "server_not_reachable", "detail": repr(exc)}, indent=2), encoding="utf-8")
+        print("json_summary:", json_path)
+        return 1
     print("VRAM:", nvidia_smi())
+
     if not args.skip_writer:
         results.append(run_job(base, "Writer Manager", {"route": "writer", "prompt": args.writer_prompt}, args.poll, args.timeout))
     if not args.skip_code:
         results.append(run_job(base, "Code Handoff", {"route": "code", "prompt": args.code_prompt}, args.poll, args.timeout))
     if not args.skip_image:
-        results.append(run_job(base, "Image Handoff", {
-            "route": "image", "prompt": args.image_prompt,
-            "width": args.image_width, "height": args.image_height,
-            "steps": args.image_steps, "cfg_scale": 7.5, "seed": -1, "style": "cinematic",
-        }, args.poll, args.timeout))
+        results.append(
+            run_job(
+                base,
+                "Image Handoff",
+                {
+                    "route": "image",
+                    "prompt": args.image_prompt,
+                    "width": args.image_width,
+                    "height": args.image_height,
+                    "steps": args.image_steps,
+                    "cfg_scale": 7.5,
+                    "seed": -1,
+                    "style": "cinematic",
+                },
+                args.poll,
+                args.timeout,
+            )
+        )
+
     header("Benchmark Summary")
     for r in results:
         print(f"{'OK' if r.get('ok') else 'FAIL'} | {r.get('name')} | {r.get('seconds', 0):.2f}s | {r.get('status')} | {r.get('job_id', '-')}")
@@ -133,6 +198,7 @@ def run(args: argparse.Namespace) -> int:
     print("json_summary:", json_path)
     print("finished:", dt.datetime.now().isoformat(timespec="seconds"))
     return 1 if failures else 0
+
 
 def main() -> int:
     p = argparse.ArgumentParser(description="SyMoNeuRaL_ML benchmark; creates logs automatically")
@@ -162,6 +228,7 @@ def main() -> int:
     tee.close()
     print(f"Saved benchmark log: {path}")
     return code
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

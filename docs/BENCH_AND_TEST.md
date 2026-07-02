@@ -2,7 +2,20 @@
 
 The scripts create log files automatically. Do not wrap them with `tee`.
 
+They also auto-run through `.venv/bin/python` when `.venv` exists, so normal usage is:
+
+```bash
+python test.py
+python bench.py
+```
+
 ## Smoke test
+
+Local checks only, no server required:
+
+```bash
+python test.py --no-api
+```
 
 With the server running:
 
@@ -16,6 +29,8 @@ The script writes:
 logs/test_YYYYMMDD_HHMMSS.log
 logs/test_YYYYMMDD_HHMMSS.json
 ```
+
+If the server is not running, `python test.py` will still complete local checks and mark API checks as skipped warnings unless `--require-server` is used.
 
 ## Benchmark
 
@@ -37,6 +52,7 @@ Useful options:
 ```bash
 python test.py --no-api
 python test.py --no-job
+python test.py --require-server
 python bench.py --skip-code --skip-image
 python bench.py --skip-writer --skip-image
 python bench.py --skip-writer --skip-code
