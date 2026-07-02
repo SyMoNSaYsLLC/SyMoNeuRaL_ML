@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+PYTHON_BIN="$PWD/.venv/bin/python"
+[ -x "$PYTHON_BIN" ] || PYTHON_BIN="$(command -v python3)"
 cd "$(dirname "$0")/.."
 
 echo "== SyMoNeuRaL doctor =="
@@ -48,7 +50,7 @@ find models -maxdepth 3 -type f \( -name '*.gguf' -o -name '*.safetensors' -o -n
 
 echo
 echo "== Python import check =="
-python3 - <<'PY'
+"$PYTHON_BIN" - <<'PY'
 import app.main
 import symon_tools
 print("OK: app.main and symon_tools import")
