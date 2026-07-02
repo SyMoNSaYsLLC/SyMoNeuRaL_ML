@@ -42,3 +42,10 @@ __pycache__/
 .ruff_cache/
 *.egg-info/
 symoneural_ml.egg-info/
+
+# Local update extraction/cache
+.symon_update/
+
+# Local build logs
+buildlog.txt
+*.log
