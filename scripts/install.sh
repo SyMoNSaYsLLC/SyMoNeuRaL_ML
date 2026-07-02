@@ -9,7 +9,7 @@ pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt
 pip install -e .
 
-mkdir -p engines models/llm models/sd models/adapters logs bin /mnt/data/symoneural_handoff_jobs
+mkdir -p engines models/llm models/sd models/adapters logs bin data/symoneural_handoff_jobs data/symoneural_coder_jobs
 
 cat <<'MSG'
 Install complete.

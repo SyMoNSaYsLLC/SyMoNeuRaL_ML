@@ -109,7 +109,7 @@ class HandoffJob:
 
 
 class ExclusiveHandoffManager:
-    def __init__(self, work_root: str = "/mnt/data/symoneural_handoff_jobs"):
+    def __init__(self, work_root: str = "data/symoneural_handoff_jobs"):
         self.work_root = Path(os.getenv("SYMON_HANDOFF_WORKDIR", work_root)).resolve()
         self.artifact_root = self.work_root / "artifacts"
         self.image_root = self.work_root / "images"

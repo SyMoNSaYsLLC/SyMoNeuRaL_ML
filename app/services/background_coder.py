@@ -61,7 +61,7 @@ class CoderJob:
 
 
 class BackgroundCoderManager:
-    def __init__(self, default_work_root: str = "/mnt/data/symoneural_coder_jobs"):
+    def __init__(self, default_work_root: str = "data/symoneural_coder_jobs"):
         self.work_root = Path(os.getenv("SYMON_CODER_WORKDIR", default_work_root)).resolve()
         self.artifact_root = self.work_root / "artifacts"
         self.jobs: dict[str, CoderJob] = {}

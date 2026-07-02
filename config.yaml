@@ -46,7 +46,7 @@ orchestration:
   resident_engine: writer
   max_rounds: 2
   wait_message: "This task requires a lot of processing power, but please wait — your code/image is coming soon."
-  handoff_workdir: /mnt/data/symoneural_handoff_jobs
+  handoff_workdir: data/symoneural_handoff_jobs
 
 moe:
   default_route: writer
