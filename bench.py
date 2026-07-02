@@ -8,7 +8,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 
 def _venv_python() -> Path | None:
-    # Try the common venv launchers in order. Some Python installs create python3 only.
     for rel in (".venv/bin/python", ".venv/bin/python3"):
         p = ROOT / rel
         if p.exists() and os.access(p, os.X_OK):
@@ -23,6 +22,7 @@ import argparse
 import contextlib
 import datetime as dt
 import json
+import os
 import subprocess
 import sys
 import time
@@ -45,6 +45,32 @@ class Tee:
     def close(self) -> None:
         self.file.close()
 
+class ResourceMonitor:
+    def __init__(self, prefix: str, interval: float = 1.0):
+        (ROOT / "logs").mkdir(exist_ok=True)
+        stamp = dt.datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.csv_path = ROOT / "logs" / f"{prefix}_{stamp}_metrics.csv"
+        self.summary_path = ROOT / "logs" / f"{prefix}_{stamp}_metrics_summary.json"
+        self.proc: subprocess.Popen[str] | None = None
+        self.interval = interval
+    def start(self) -> None:
+        cmd = [sys.executable, str(ROOT / "resource_monitor.py"), "--out", str(self.csv_path), "--summary", str(self.summary_path), "--interval", str(self.interval)]
+        self.proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, text=True)
+    def stop(self) -> None:
+        if not self.proc:
+            return
+        self.proc.terminate()
+        try:
+            self.proc.wait(timeout=8)
+        except subprocess.TimeoutExpired:
+            self.proc.kill()
+            self.proc.wait(timeout=8)
+    def summary(self) -> dict[str, Any]:
+        try:
+            return json.loads(self.summary_path.read_text())
+        except Exception:
+            return {}
+
 def log_path(prefix: str, requested: str | None) -> Path:
     if requested:
         p = Path(requested)
@@ -64,16 +90,6 @@ def http_json(method: str, url: str, payload: dict[str, Any] | None = None, time
     with urllib.request.urlopen(req, timeout=timeout) as resp:
         body = resp.read().decode("utf-8", "replace")
         return json.loads(body) if body else {}
-
-def nvidia_smi() -> str:
-    try:
-        return subprocess.check_output([
-            "nvidia-smi",
-            "--query-gpu=name,memory.used,memory.total,utilization.gpu,power.draw,temperature.gpu",
-            "--format=csv,noheader,nounits",
-        ], text=True, stderr=subprocess.STDOUT, timeout=8).strip()
-    except Exception as exc:
-        return f"nvidia-smi unavailable: {exc!r}"
 
 def header(name: str) -> None:
     print("\n" + "=" * 80)
@@ -96,7 +112,6 @@ def wait_job(base: str, job_id: str, poll: float, timeout: float) -> dict[str, A
 
 def run_job(base: str, name: str, payload: dict[str, Any], poll: float, timeout: float) -> dict[str, Any]:
     header(name)
-    print("VRAM before:", nvidia_smi())
     started = time.time()
     result: dict[str, Any] = {"name": name, "ok": False}
     try:
@@ -114,7 +129,6 @@ def run_job(base: str, name: str, payload: dict[str, Any], poll: float, timeout:
             "artifact_url": f"{base}/api/v1/manager/jobs/{job_id}/artifact" if final.get("artifact") or final.get("image_path") else None,
             "detail": final.get("result_text") or final.get("error") or final.get("user_message") or "",
         })
-        print("VRAM after:", nvidia_smi())
         print("result:", result["status"])
         if result["artifact_url"]:
             print("artifact:", result["artifact_url"])
@@ -123,10 +137,9 @@ def run_job(base: str, name: str, payload: dict[str, Any], poll: float, timeout:
     except Exception as exc:
         result.update({"seconds": time.time() - started, "status": "failed", "detail": repr(exc)})
         print("FAILED:", repr(exc))
-        print("VRAM after:", nvidia_smi())
     return result
 
-def run(args: argparse.Namespace) -> int:
+def run(args: argparse.Namespace, monitor: ResourceMonitor | None) -> int:
     base = args.base.rstrip("/")
     results = []
     header("SyMoNeuRaL_ML Benchmark")
@@ -135,6 +148,9 @@ def run(args: argparse.Namespace) -> int:
     print("python:", sys.executable)
     print("base:", base)
     print("log:", args.log_file)
+    if monitor:
+        print("metrics_csv:", monitor.csv_path)
+        print("metrics_summary:", monitor.summary_path)
 
     header("Health")
     try:
@@ -148,7 +164,6 @@ def run(args: argparse.Namespace) -> int:
         json_path.write_text(json.dumps({"failures": 1, "error": "server_not_reachable", "detail": repr(exc)}, indent=2), encoding="utf-8")
         print("json_summary:", json_path)
         return 1
-    print("VRAM:", nvidia_smi())
 
     if not args.skip_writer:
         results.append(run_job(base, "Writer Manager", {"route": "writer", "prompt": args.writer_prompt}, args.poll, args.timeout))
@@ -167,18 +182,23 @@ def run(args: argparse.Namespace) -> int:
         if r.get("artifact_url"):
             print("artifact:", r["artifact_url"])
     failures = sum(1 for r in results if not r.get("ok"))
+    metrics = monitor.summary() if monitor else {}
+    if metrics:
+        print("metrics:", json.dumps(metrics, indent=2))
     json_path = Path(str(args.log_file).replace(".log", ".json"))
-    json_path.write_text(json.dumps({"results": results, "failures": failures}, indent=2), encoding="utf-8")
+    json_path.write_text(json.dumps({"results": results, "failures": failures, "metrics": metrics}, indent=2), encoding="utf-8")
     print("json_summary:", json_path)
     print("finished:", dt.datetime.now().isoformat(timespec="seconds"))
     return 1 if failures else 0
 
 def main() -> int:
-    p = argparse.ArgumentParser(description="SyMoNeuRaL_ML benchmark; creates logs automatically")
+    p = argparse.ArgumentParser(description="SyMoNeuRaL_ML benchmark with automatic logs and CPU/VRAM metrics")
     p.add_argument("--base", default="http://127.0.0.1:8000")
     p.add_argument("--poll", type=float, default=2.0)
     p.add_argument("--timeout", type=float, default=600.0)
     p.add_argument("--log-file")
+    p.add_argument("--no-metrics", action="store_true")
+    p.add_argument("--metrics-interval", type=float, default=1.0)
     p.add_argument("--skip-writer", action="store_true")
     p.add_argument("--skip-code", action="store_true")
     p.add_argument("--skip-image", action="store_true")
@@ -191,15 +211,26 @@ def main() -> int:
     args = p.parse_args()
     path = log_path("bench", args.log_file)
     args.log_file = str(path)
+    monitor = None if args.no_metrics else ResourceMonitor("bench", args.metrics_interval)
     tee = Tee(path)
     with contextlib.redirect_stdout(tee), contextlib.redirect_stderr(tee):
         try:
-            code = run(args)
+            if monitor:
+                monitor.start()
+            code = run(args, monitor)
         finally:
+            if monitor:
+                monitor.stop()
             print(f"\nLOG_FILE={path}")
+            if monitor:
+                print(f"METRICS_CSV={monitor.csv_path}")
+                print(f"METRICS_SUMMARY={monitor.summary_path}")
             tee.flush()
     tee.close()
     print(f"Saved benchmark log: {path}")
+    if monitor:
+        print(f"Saved metrics CSV: {monitor.csv_path}")
+        print(f"Saved metrics summary: {monitor.summary_path}")
     return code
 
 if __name__ == "__main__":
