@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ ui_get('login.title', 'Login') }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<div class="bg-grid"></div>
+<main class="layout">
+  <section class="panel narrow">
+    <h2>{{ ui_get('login.heading', 'Client Login') }}</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}{% for category, message in messages %}<p>{{ message }}</p>{% endfor %}{% endif %}
+    {% endwith %}
+    <form method="post" action="{{ url_for('login') }}">
+      <input name="username" placeholder="Username" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit">{{ ui_get('login.submit', 'Sign In') }}</button>
+    </form>
+    <div class="action-row">
+      <a class="tab-link cta-primary" href="{{ url_for('register') }}">{{ ui_get('login.create', 'Create Account') }}</a>
+      <a class="tab-link" href="{{ url_for('landing') }}">{{ ui_get('login.back', 'Back to Home') }}</a>
+    </div>
+  </section>
+</main>
+</body>
+</html>

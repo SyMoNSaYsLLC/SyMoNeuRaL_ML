@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SyMoNeuRaL | System Integration & Automation</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <main class="layout landing-layout">
+    <section class="panel landing-panel">
+      <div class="landing-badge">Lake Norman, NC • System Integration & Automation</div>
+
+      <div class="landing-header">
+        <img src="{{ url_for('static', filename='brand/symonicon.png') }}" alt="SyMoNeuRaL Icon" class="brand-icon">
+        <div>
+          <h2>SyMoNeuRaL</h2>
+          <p class="landing-lead">
+            Professional system integration and automation services designed to improve reliability,
+            reduce manual effort, and modernize operations.
+          </p>
+        </div>
+      </div>
+
+      <div class="landing-featured">
+        <img src="{{ url_for('static', filename='brand/symoneural.jpg') }}" alt="SyMoNeuRaL featured architecture">
+      </div>
+
+      <h3>Core Services</h3>
+      <ul class="core-services">
+        <li>System integration across software, devices, and operational workflows</li>
+        <li>Process automation and workflow orchestration</li>
+        <li>Legacy modernization and migration planning</li>
+        <li>Deployment standardization and operational support</li>
+      </ul>
+
+      <div class="action-row">
+        <a class="tab-link cta-primary" href="{{ url_for('register') }}">Create Account</a>
+        <a class="tab-link" href="{{ url_for('login') }}">Client Login</a>
+        <a class="tab-link"
+           href="mailto:gmcdonald@symoneural.com,bhesley@symoneural.com?subject=Service%20Request&body=Hello%20SyMoNeuRaL%20Team,%0D%0A%0D%0APlease%20provide%20information%20about%20your%20needs:%0D%0A-%20Business%20or%20project%20overview%0D%0A-%20Current%20systems%20and%20tools%0D%0A-%20Goals%20and%20timeline%0D%0A-%20Preferred%20budget%20range%0D%0A%0D%0AWe%20will%20review%20and%20provide%20a%20quote.%0D%0A">
+          Request Service
+        </a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,79 @@
+{
+  "brand": {
+    "name": "SyMoNeuRaL",
+    "tagline": "Engineering Reliable Digital Operations"
+  },
+  "landing": {
+    "title": "SyMoNeuRaL | Integration, Automation, and Modernization",
+    "badge": "Lake Norman, NC • Integration • Automation • Support",
+    "headline": "Engineering Reliable Digital Operations",
+    "subheadline": "We integrate platforms, automate repetitive work, and modernize legacy workflows so your team can execute faster with less friction.",
+    "servicesTitle": "Core Services",
+    "services": [
+      "Cross-platform system integration",
+      "Workflow automation and orchestration",
+      "Legacy platform modernization",
+      "Deployment hardening and operational support"
+    ],
+    "ctaCreate": "Create Account",
+    "ctaLogin": "Client Login",
+    "ctaRequest": "Request Service"
+  },
+  "login": {
+    "title": "Login | SyMoNeuRaL",
+    "heading": "Client Login",
+    "submit": "Sign In",
+    "create": "Create Account",
+    "back": "Back to Home"
+  },
+  "register": {
+    "title": "Create Account | SyMoNeuRaL",
+    "heading": "Create Account",
+    "submit": "Create Account",
+    "loginLink": "Already have an account? Login"
+  },
+  "selectAvatar": {
+    "title": "Select Avatar | SyMoNeuRaL",
+    "heading": "Select Avatar",
+    "save": "Save Avatar",
+    "back": "Back"
+  },
+  "dashboard": {
+    "title": "SyMoNeuRaL | Dashboard",
+    "tabs": {
+      "overview": "Quick Overview",
+      "about": "About",
+      "account": "Account",
+      "chat": "Chat Session",
+      "logout": "Logout"
+    },
+    "overview": {
+      "headline": "Client Operations Dashboard",
+      "subheadline": "Track current support activity, account settings, and team collaboration in one workspace.",
+      "points": [
+        "Review integration status and rollout progress",
+        "Coordinate requests through team chat",
+        "Manage account security and profile settings",
+        "Maintain stable production operations"
+      ]
+    },
+    "account": {
+      "profileTitle": "Profile & Identity",
+      "securityTitle": "Security",
+      "quickAvatarTitle": "Quick Avatar Change"
+    },
+    "chat": {
+      "title": "Team Chat",
+      "onlineUsers": "Online Users",
+      "inputPlaceholder": "Type a message...",
+      "send": "Send"
+    }
+  },
+  "avatars": {
+    "curated": [
+      "neon_circuit.png",
+      "quantum_orb.png",
+      "cyber_fox.png"
+    ]
+  }
+}

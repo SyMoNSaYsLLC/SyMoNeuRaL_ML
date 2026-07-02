@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ ui_get('dashboard.title', 'Dashboard') }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<div class="bg-grid"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">S</span>
+    <div>
+      <h1>{{ ui_get('brand.name', 'SyMoNeuRaL') }}</h1>
+      <p>Welcome, {{ user.full_name or user.username }}</p>
+    </div>
+  </div>
+  <nav class="tabs">
+    <button class="tab-btn" data-tab="overview">{{ ui_get('dashboard.tabs.overview', 'Quick Overview') }}</button>
+    <button class="tab-btn" data-tab="about">{{ ui_get('dashboard.tabs.about', 'About') }}</button>
+    <button class="tab-btn" data-tab="account">{{ ui_get('dashboard.tabs.account', 'Account') }}</button>
+    <button class="tab-btn" data-tab="chat">{{ ui_get('dashboard.tabs.chat', 'Chat Session') }}</button>
+    <a class="tab-link" href="{{ url_for('logout') }}">{{ ui_get('dashboard.tabs.logout', 'Logout') }}</a>
+  </nav>
+</header>
+
+<main class="layout">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}<section class="panel">{% for category, message in messages %}<p>{{ message }}</p>{% endfor %}</section>{% endif %}
+  {% endwith %}
+
+  <section id="overview" class="tab-panel">
+    <div class="hero-card">
+      <div>
+        <h2>{{ ui_get('dashboard.overview.headline', 'Client Operations Dashboard') }}</h2>
+        <p>{{ ui_get('dashboard.overview.subheadline', '') }}</p>
+        <ul>
+          {% for p in ui_get('dashboard.overview.points', []) %}
+          <li>{{ p }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="hero-image-wrap">
+        <img src="{{ url_for('static', filename='brand/symoneural.jpg') }}" alt="SyMoNeuRaL architecture" class="hero-image">
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="tab-panel">
+    <article class="panel">
+      <h3>Company Overview</h3>
+      <div class="scroll-window about-window"><pre class="doc-text">{{ company_overview }}</pre></div>
+    </article>
+  </section>
+
+  <section id="account" class="tab-panel">
+    <div class="account-grid">
+      <article class="panel account-card">
+        <div class="account-card-head">
+          <h3>{{ ui_get('dashboard.account.profileTitle', 'Profile & Identity') }}</h3>
+          <p class="muted">Control your display avatar and workspace presence.</p>
+        </div>
+
+        <div class="current-avatar-row">
+          <img src="{{ url_for('static', filename=user.photo_path or 'avatars/user.png') }}" alt="Current avatar" class="current-avatar">
+          <div>
+            <strong>{{ user.full_name or user.username }}</strong>
+            <p class="muted">Current profile avatar</p>
+          </div>
+        </div>
+
+        <div class="action-row">
+          <a class="tab-link" href="{{ url_for('select_avatar') }}">Open Full Avatar Library</a>
+        </div>
+
+        <hr class="divider">
+
+        <h4>{{ ui_get('dashboard.account.quickAvatarTitle', 'Quick Avatar Change') }}</h4>
+        <p class="muted">Choose an icon and save.</p>
+        <form method="post" action="{{ url_for('account_change_avatar') }}">
+          <div class="quick-avatar-grid">
+            {% for a in avatars %}
+            <label class="quick-avatar-option">
+              <input type="radio" name="avatar" value="{{ a }}" {% if user.photo_path and user.photo_path.endswith('/' ~ a) %}checked{% endif %} required>
+              <img src="{{ url_for('static', filename='avatars/' ~ a) }}" alt="{{ a }}">
+              <span>{{ a.rsplit('.', 1)[0] }}</span>
+            </label>
+            {% endfor %}
+          </div>
+          <div class="action-row">
+            <button type="submit" class="tab-link cta-primary">Save Avatar</button>
+          </div>
+        </form>
+      </article>
+
+      <article class="panel account-card">
+        <div class="account-card-head">
+          <h3>{{ ui_get('dashboard.account.securityTitle', 'Security') }}</h3>
+          <p class="muted">Update your password with clear guided fields.</p>
+        </div>
+
+        <form method="post" action="{{ url_for('account_change_password') }}" class="account-form">
+          <label for="current_password">Current Password</label>
+          <input id="current_password" type="password" name="current_password" autocomplete="current-password" required>
+
+          <label for="new_password">New Password</label>
+          <input id="new_password" type="password" name="new_password" minlength="8" autocomplete="new-password" required>
+          <small class="muted">Minimum 8 characters.</small>
+
+          <label for="confirm_password">Confirm New Password</label>
+          <input id="confirm_password" type="password" name="confirm_password" minlength="8" autocomplete="new-password" required>
+
+          <div class="action-row">
+            <button type="submit" class="tab-link cta-primary">Update Password</button>
+          </div>
+        </form>
+      </article>
+    </div>
+  </section>
+
+  <section id="chat" class="tab-panel">
+    <article class="panel">
+      <h3>{{ ui_get('dashboard.chat.title', 'Team Chat') }}</h3>
+      <div class="chat-wrap">
+        <div>
+          <h4>{{ ui_get('dashboard.chat.onlineUsers', 'Online Users') }}</h4>
+          <ul id="onlineUsers"></ul>
+        </div>
+        <div>
+          <div id="chatMessages" class="chat-messages"></div>
+          <form id="chatForm">
+            <input
+              id="chatInput"
+              name="body"
+              placeholder="{{ ui_get('dashboard.chat.inputPlaceholder', 'Type a message...') }}"
+              maxlength="500"
+              required
+            >
+            <button type="submit">{{ ui_get('dashboard.chat.send', 'Send') }}</button>
+          </form>
+        </div>
+      </div>
+    </article>
+  </section>
+</main>
+
+<script>
+const buttons=document.querySelectorAll('.tab-btn');
+const panels=document.querySelectorAll('.tab-panel');
+const initialTab="{{ initial_tab|default('overview') }}";
+function activateTab(tab){buttons.forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));panels.forEach(p=>p.classList.toggle('active',p.id===tab));}
+buttons.forEach(btn=>btn.addEventListener('click',()=>activateTab(btn.dataset.tab)));activateTab(initialTab);
+
+let lastId=0;
+async function ping(){try{await fetch('/api/presence/ping',{method:'POST'});}catch(_){}}
+async function loadOnline(){try{const r=await fetch('/api/online');const d=await r.json();document.getElementById('onlineUsers').innerHTML=d.map(u=>`<li>${u.username}</li>`).join('');}catch(_){}}
+async function loadMessages(){try{const r=await fetch('/api/chat/messages?since_id='+lastId);const d=await r.json();const box=document.getElementById('chatMessages');d.forEach(m=>{lastId=m.id;const row=document.createElement('div');row.textContent=`[${m.created_at}] ${m.username}: ${m.body}`;box.appendChild(row);});box.scrollTop=box.scrollHeight;}catch(_){}}
+const f=document.getElementById('chatForm');
+if(f){f.addEventListener('submit',async(e)=>{e.preventDefault();const i=document.getElementById('chatInput');const body=i.value.trim();if(!body)return;const fd=new FormData();fd.append('body',body);await fetch('/api/chat/messages',{method:'POST',body:fd});i.value='';loadMessages();});
+setInterval(ping,20000);setInterval(loadOnline,5000);setInterval(loadMessages,2000);ping();loadOnline();loadMessages();}
+</script>
+</body>
+</html>

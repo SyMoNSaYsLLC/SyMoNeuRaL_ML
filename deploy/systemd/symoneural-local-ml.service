@@ -1,0 +1,15 @@
+[Unit]
+Description=SyMoNeuRaL Local ML
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/google/SyMoNeuRaL_Local_ML
+EnvironmentFile=-/home/google/SyMoNeuRaL_Local_ML/.env
+ExecStart=/home/google/SyMoNeuRaL_Local_ML/.venv/bin/python main.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

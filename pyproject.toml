@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "symoneural-ml"
+version = "1.5.1"
+description = "SyMoNeuRaL_ML: NVIDIA-focused local MoE server with CUDA model tools, llama.cpp, stable-diffusion.cpp, FastAPI, and exclusive VRAM handoff"
+requires-python = ">=3.10"
+dependencies = [
+  "fastapi",
+  "uvicorn[standard]",
+  "httpx",
+  "pyyaml",
+  "pydantic",
+]
+
+[project.scripts]
+symon-server = "symon_tools.server:main"
+symon-web = "symon_tools.web:main"
+symon-cli = "symon_tools.cli:main"
+symon-build = "symon_tools.build:main"
+symon-hf_to_gguf = "symon_tools.convert:main"
+symon-vram = "symon_tools.vram:main"
+
+[tool.setuptools]
+packages = ["symon_tools"]

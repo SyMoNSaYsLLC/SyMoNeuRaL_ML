@@ -1,0 +1,85 @@
+* { 
+    box-sizing: border-box;
+}
+
+body { 
+    margin: 0; 
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; 
+    color: #F3F4F6; /* Light gray text */
+    background: #111827; /* Dark navy background */
+}
+
+.container { max-width: 900px; margin: 80px auto 120px; padding: 0 16px; }
+.card {
+  background: #1F2937; /* Darker card background */
+  border-radius: 16px; 
+  padding: 24px;
+  border: 1px solid #4b5563; /* Subtle border */
+  text-align: center;
+}
+.avatar-large {
+  width: 144px; 
+  height: 144px; 
+  border-radius: 50%; 
+  object-fit: cover; 
+  display: block; 
+  margin: 0 auto 16px;
+  border: 3px solid #8B5CF6; /* Purple accent border */
+}
+h1 { 
+    margin: 8px 0 4px; 
+    font-size: 28px; 
+    color: #FFFFFF; /* Pure white for headers */
+}
+.muted { 
+    color: #9CA3AF; /* Lighter muted color */
+    margin: 0 0 12px; 
+}
+.bio { font-size: 16px; line-height: 1.5; }
+
+.bottom-bar {
+  position: fixed; 
+  left: 0; 
+  right: 0; 
+  bottom: 0;
+  background: #1F2937; /* Match card background */
+  border-top: 1px solid #374151; /* Darker border */
+  display: flex; 
+  gap: 12px; 
+  padding: 8px 12px;
+  justify-content: center;
+}
+.thumb {
+  display: inline-flex; 
+  flex-direction: column; 
+  align-items: center;
+  padding: 8px; 
+  text-decoration: none; 
+  color: #F3F4F6; /* Light text */
+  white-space: nowrap;
+}
+.thumb img {
+  width: 56px; 
+  height: 56px; 
+  border-radius: 50%; 
+  object-fit: cover;
+  border: 2px solid transparent; 
+  transition: border-color .15s ease;
+}
+.thumb:hover img { 
+    border-color: #34D399; /* Cyan/Green accent for hover */
+}
+.thumb span { 
+    font-size: 12px; 
+    margin-top: 6px; 
+    color: #D1D5DB; /* Slightly dimmer text for thumb names */
+}
+
+.flag-inline {
+  width: 24px;
+  height: 24px;
+  margin-left: 8px;
+  vertical-align: middle;
+  border-radius: 2px;
+}
+

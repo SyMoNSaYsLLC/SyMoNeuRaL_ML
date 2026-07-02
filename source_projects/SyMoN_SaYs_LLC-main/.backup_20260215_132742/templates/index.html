@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SyMoNeuRaL | Symon-Says LLC</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">S</span>
+      <div>
+        <h1>SyMoNeuRaL</h1>
+        <p>Doing Business as Symon-Says LLC</p>
+      </div>
+    </div>
+
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="overview">Quick Overview</button>
+      <button class="tab-btn" data-tab="about">About</button>
+    </nav>
+  </header>
+
+  <main class="layout">
+    <section id="overview" class="tab-panel active">
+      <div class="hero-card">
+        <div class="hero-text">
+          <h2>High-Density Edge Computing + Sustainable Silicon Lifecycle</h2>
+          <p>
+            System integration for embedded devices and PCs/laptops, bridging legacy
+            hardware with modern AI requirements through layered OS + software orchestration.
+          </p>
+          <ul>
+            <li>Machine + OS integration tailored to customer needs</li>
+            <li>Full-stack software automation for operations</li>
+            <li>Read-only root filesystem for deployment reliability</li>
+          </ul>
+        </div>
+        <div class="hero-image-wrap">
+          <img src="{{ url_for('static', filename='brand/symoneural.jpg') }}" alt="SyMoNeuRaL network architecture" class="hero-image">
+        </div>
+      </div>
+
+      <!-- Optional existing dynamic content -->
+      {% if users %}
+      <section class="panel">
+        <h3>Current Users</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Avatar</th>
+                <th>Flag</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for u in users %}
+              <tr>
+                <td>{{ u.id }}</td>
+                <td>{{ u.username }}</td>
+                <td>{{ u.avatar }}</td>
+                <td>{{ u.flag }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+      {% endif %}
+    </section>
+
+    <section id="about" class="tab-panel">
+      <article class="panel">
+        <h3>Company Overview (Source Document)</h3>
+        <div class="scroll-window about-window">
+          <pre class="doc-text">{{ company_overview }}</pre>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h3>Core Delivery Model</h3>
+        <ul>
+          <li>Layer indexing based on OpenEmbedded/Yocto-compatible approaches</li>
+          <li>BitBake-based build automation</li>
+          <li>Custom software layers + custom bootloader workflows</li>
+          <li>QEMU pre-flash validation to reduce hardware risk</li>
+        </ul>
+      </article>
+
+      <article class="panel">
+        <h3>Target Architectures & Systems</h3>
+        <ul>
+          <li>ARM: ARMv8-A / ARMv9-A, legacy ARMv7-A</li>
+          <li>x86: x86-64 + legacy variants</li>
+          <li>RISC-V support path for open AI accelerator use-cases</li>
+          <li>Linux/BSD/Windows/Unix-like and custom targets</li>
+        </ul>
+      </article>
+
+      <article class="panel">
+        <h3>Maintainers</h3>
+        <ul>
+          <li>Ben Hesley — bhesley@symoneural.com</li>
+          <li>Garrett McDonald — gmcdonald@symoneural.com</li>
+          <li>symonsayadmin@symoneural.com</li>
+          <li>saysupport@symoneural.com</li>
+        </ul>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const buttons = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.tab-panel');
+    const initialTab = "{{ initial_tab|default('overview') }}";
+
+    function activateTab(tabName) {
+      buttons.forEach(b => b.classList.toggle('active', b.dataset.tab === tabName));
+      panels.forEach(p => p.classList.toggle('active', p.id === tabName));
+    }
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => activateTab(btn.dataset.tab));
+    });
+
+    activateTab(initialTab);
+  </script>
+</body>
+</html>

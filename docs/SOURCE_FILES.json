@@ -1,0 +1,37 @@
+[
+  {
+    "file": "symoneural-os-main.zip",
+    "sha256": "3ea0904ce16fa04a32a4abb4ea017d21c005e8064aa0796e5e5ea421599d9966",
+    "size_bytes": 652823
+  },
+  {
+    "file": "warehouse_api_demo-main.zip",
+    "sha256": "f1b93f5fd47ecd6d72154e50b8379146cddbaaa28c85ea5be59300c865805138",
+    "size_bytes": 8080
+  },
+  {
+    "file": "rag_ollama-main.zip",
+    "sha256": "09d144745dadffb2fecfee69f0d8071976a5d8f2ff6a192442b2c9ddd9572086",
+    "size_bytes": 8098003
+  },
+  {
+    "file": "fine_tuning-main.zip",
+    "sha256": "260d000bc89388c6fe4b50cb22185f06f69daa29a415321dfb6e85830bdc60db",
+    "size_bytes": 13673
+  },
+  {
+    "file": "local-ai-v9.1.tar.gz",
+    "sha256": "de0d398c888c1c2dc2284f639899813d87c227680c0a9409af540b63bf1f853b",
+    "size_bytes": 34956
+  },
+  {
+    "file": "SyMoN_SaYs_LLC-main.zip",
+    "sha256": "120cd739db83e350e42554d1a040eca7fcd7f74739e9687e004ce6c466453b96",
+    "size_bytes": 85371602
+  },
+  {
+    "file": "Symon_MoE-main.zip",
+    "sha256": "71126b63e3f0451712c02621bb22edccf8e7a485040821d0d18f3b60b5373247",
+    "size_bytes": 210263
+  }
+]

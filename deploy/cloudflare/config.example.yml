@@ -1,0 +1,7 @@
+tunnel: symoneural-local-ml
+credentials-file: /etc/cloudflared/symoneural-local-ml.json
+
+ingress:
+  - hostname: ai.example.com
+    service: http://localhost:8000
+  - service: http_status:404

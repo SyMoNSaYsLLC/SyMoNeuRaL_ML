@@ -1,0 +1,16 @@
+[Unit]
+Description=SyMoNeuRaL Gunicorn Service
+After=network.target
+
+[Service]
+User=google
+Group=www-data
+WorkingDirectory=/home/google/Desktop/SyMoNeuRaLSQLDB_APP
+Environment="PATH=/home/google/Desktop/SyMoNeuRaLSQLDB_APP/.symondbvenv/bin"
+Environment="DB_AUTO_MIGRATE=0"
+ExecStart=/home/google/Desktop/SyMoNeuRaLSQLDB_APP/.symondbvenv/bin/gunicorn -w 3 -b 127.0.0.1:8000 app:app
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

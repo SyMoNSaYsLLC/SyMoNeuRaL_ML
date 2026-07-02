@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Select Avatar | SyMoNeuRaL</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<div class="bg-grid"></div>
+<main class="layout">
+  <section class="panel">
+    <h3>Select Avatar</h3>
+    <form method="post">
+      <div class="scroll-window avatar-window">
+        <div class="avatar-grid">
+          {% for avatar in avatars %}
+          <label class="avatar-option">
+            <input type="radio" name="avatar" value="{{ avatar }}" required>
+            <img src="{{ url_for('static', filename='avatars/' ~ avatar) }}" alt="{{ avatar }}">
+            <span>{{ avatar.rsplit('.', 1)[0] }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="action-row">
+        <button type="submit">Save Avatar</button>
+        <a class="tab-link" href="{{ url_for('home', tab='account') }}">Back</a>
+      </div>
+    </form>
+  </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,118 @@
+SyMoNeuRaL Doing Business as Symon-Says LLC
+
+1. What is the business?
+    a. SyMoNeuRaL is an engineering firm focused on high-density edge computing and sustainable silicon lifecycle management. We operate under the trade name Symon-Says, representing our commitment to clear, authoritative systems orchestration.
+
+2. What does SyMoNeuRaL do?
+    a. Symoneural provides Mystem, Machine and OS integration based on customer needs. This is complemented by full-stack software development to streamline/automate processes. This enables the capability to bridge gaps between legacy hardware substrates and modern AI requirements.
+
+3. What does SyMoNeuRaL not do?
+    a. Symoneural do not design hardware
+    b. Symoneural IS NOT a package management company; Symoneural is not an application install after boot company. Updates, modifications and integration is applied and active on first boot ensuring realiablity and sustainability.
+
+4. Who are the maintainers?
+    a. Ben Hesley bhesley@symoneural.com
+    b. Garrett McDonald gmcdonald@symoneural.com
+
+    Additional Contacts
+        c. symonsayadmin@symoneural.com
+        d. saynoreply@symoneural.com
+        e. sayalert@symoneural.com
+        f. saysupport@symoneural.com
+
+5. What types of systems?
+    a. Embedded Devices (smart devices)
+    b. PC/Laptops
+
+6. How is this accomplished?
+    a. Source code Layer Indexing
+
+7. How do you layer index source code?
+
+    a. "The Symoneural Way" based off reference Distributions such as the following:
+        aa. OpenEmbedded (https://layers.openembedded.org/layerindex)
+        bb. Yocto Project https://www.yoctoproject.org/development/yocto-project-compatible-layers)
+
+    b. Automation Software used to build systems by these Distributions is Bitbake
+        aa. "BitBake is a task execution engine build automation tool that allows shell and Python tasks to run in parallel yet in order constrained by configured dependencies. It was originally developed for and is commonly used to build embedded Linux distributions – often using a cross compiler to target a system that differs architecturally from the build host."
+
+                                  SYMONEURAL BOT APPROACH
+                                    _____________________
+                                  /                       \
+                                  |     SyMoNeuRaL-OS     |
+                               |--\                       /--|
+                                    \     *        *    /
+                                     \        >        /
+                                      \               /
+                                       \     ---     /
+                                        \           /
+                                         |         |
+                                       CPU Architecture
+                                       /            \
+                                      /              \
+                                    ARM              x86
+                                    /                  \
+                                   /      SyMonML       \
+                                  /                      \
+                           Board Support Packages and Periferials
+                               /    \                  /    \
+                              /      \                /      \
+                             /        \              /        \
+                            /          \            /          \
+                          Debian      Arch         BSD        WIN11
+                         |-----------------------------------------|
+                         |       SyMoneuRaL Software Layer         |
+                         |-----------------------------------------|
+
+8. Example Time!
+    a. Meta-symoneural-python-program-to-do-something-cool-like-ML-AI-blah-blah software package
+        aa. **This is not a normal software package, in order to install this software the OS must be re-flashed**
+
+    b. Owner/User Request
+        aa. Custom Software Layer: The common substrate of libraries, Python runtimes, and drivers that make the system functional.
+        bb. Custom bootloaders: Where the "magic" happens (firmware/kernel).
+
+9. High-Value Features and "Big Money" Applications By using this layered approach, we offer features typically reserved for high-budget aerospace or defense projects. Symoneural designed for multi-million dollar applications, such as Autonomous Industrial Monitoring, Secure Edge Gateways for Smart Cities, and High-Density Local AI Training Clusters that bypass the need for expensive cloud subscriptions.
+
+   a. These need Read-Only Filesystem
+        aa. By implementing read-only-rootfs, we ensure that the system is immutable and immune to corruption from sudden power loss—critical   for industrial edge deployments.
+
+10. Other Possible Targets:
+
+    a. Which ARM (https://www.arm.com/architecture) and are there any specifics on CPU instruction set
+        aa. ARMv8-A/ARMv9-A 64-bit-AArch64 - Current standard for high-performance computing, servers and modern laptops
+        bb. ARMv7-A/32-bit legacy/embedded standard
+
+    b. Which x86 (https://copy.sh/v86/)
+        aa. x86-64 (64 bit) standard user
+        bb. i386 (32 bit) standard user
+        cc. i486 On-chip math coprocessor and cache added ***Bitcoin is born***
+        dd. i586 Original Pentium P5
+        cc. i686 Pentium Pro and beyond (arm/x86 cross-compiled "armhf")
+
+    c. $$$$$$$ But wait there is one more $$$$$$$$$$
+        aa. RISC-V Completely opensource and specialized in AI accelerators
+
+    a. Public operating system assumptions; catergorized by architecture (instruction set)
+        aa. Arch Linux
+        bb. Armbian
+        cc. Ubuntu & Debian Alpine
+        dd. Adelie
+        ee. Windows 11 on ARM
+        ff. Windows 10 on ARM
+        gg. Windows IoT Core:Embedded windows
+
+    b. Public operating system assumptions; catergorized by architecture (instruction set)
+        aa. Linux
+        bb. Berkeley Software Distribution
+        cc. Windows
+        dd. Unix-like
+        ee. DOS
+        ff. Custom
+
+
+11. Under the hood, SyMoNeuRaL leverages the most powerful tools in the open-source ecosystem
+    a. Python Builders: We use custom Python scripts to automate layer management and configuration injection.
+    b. AUTOREV & Continuous Integration: By utilizing AUTOREV, our system automatically pulls the latest revisions from our git repositories, ensuring we are always building on the "bleeding edge" of our development.
+    c. RunQEMU: We use sophisticated hardware emulation to test our builds in a virtual environment before they are ever flashed to physical silicon, reducing the risk of "bricking" hardware.
+    d. Autotools: For standardized software compilation and cross-platform compatibility.

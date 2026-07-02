@@ -1,0 +1,17 @@
+{
+  "writer": [
+    {"label":"Rewrite clean", "prompt":"Rewrite this to be clean, direct, and professional:\n\n"},
+    {"label":"Make README", "prompt":"Turn this into a clear README section with commands and file paths:\n\n"},
+    {"label":"Summarize", "prompt":"Summarize this into action items and blockers:\n\n"}
+  ],
+  "code": [
+    {"label":"Patch plan", "prompt":"Review this repo issue and give me exact files to edit plus code patches:\n\n"},
+    {"label":"Debug log", "prompt":"Debug this terminal log. Tell me root cause, exact fix, and verification commands:\n\n"},
+    {"label":"API route", "prompt":"Create a FastAPI route with Pydantic request/response models for:\n\n"}
+  ],
+  "image": [
+    {"label":"Cinematic", "prompt":"cinematic wide shot, dramatic lighting, atmospheric, high detail, "},
+    {"label":"Product", "prompt":"professional product render, studio lighting, clean background, sharp details, "},
+    {"label":"Concept art", "prompt":"epic concept art, detailed environment, volumetric light, sharp focus, "}
+  ]
+}

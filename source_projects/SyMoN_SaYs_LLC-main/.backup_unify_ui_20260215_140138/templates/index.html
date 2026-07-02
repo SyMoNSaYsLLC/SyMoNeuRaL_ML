@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SyMoNeuRaL | Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<div class="bg-grid"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">S</span>
+    <div>
+      <h1>SyMoNeuRaL</h1>
+      <p>Welcome, {{ user.full_name or user.username }}</p>
+    </div>
+  </div>
+  <nav class="tabs">
+    <button class="tab-btn" data-tab="overview">Quick Overview</button>
+    <button class="tab-btn" data-tab="about">About</button>
+    <button class="tab-btn" data-tab="account">Account</button>
+    <button class="tab-btn" data-tab="chat">Chat Session</button>
+    <a class="tab-link" href="{{ url_for('logout') }}">Logout</a>
+  </nav>
+</header>
+
+<main class="layout">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}<section class="panel">{% for category, message in messages %}<p>{{ message }}</p>{% endfor %}</section>{% endif %}
+  {% endwith %}
+
+  <section id="overview" class="tab-panel">
+    <div class="hero-card">
+      <div>
+        <h2>System Integration & Automation — Lake Norman, NC</h2>
+        <p>Business-focused engineering to unify systems and improve operational reliability.</p>
+        <ul>
+          <li>End-to-end systems integration</li>
+          <li>Workflow automation and orchestration</li>
+          <li>Legacy modernization with controlled rollout</li>
+          <li>Operational stability and support</li>
+        </ul>
+      </div>
+      <div class="hero-image-wrap">
+        <img src="{{ url_for('static', filename='brand/symoneural.jpg') }}" alt="SyMoNeuRaL architecture" class="hero-image">
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="tab-panel">
+    <article class="panel">
+      <h3>Company Overview</h3>
+      <div class="scroll-window about-window"><pre class="doc-text">{{ company_overview }}</pre></div>
+    </article>
+  </section>
+
+  <section id="account" class="tab-panel">
+    <article class="panel">
+      <h3>Account Settings</h3>
+      <p>Current avatar:
+        <img src="{{ url_for('static', filename=user.photo_path or 'avatars/user.png') }}" alt="avatar" style="width:36px;height:36px;border-radius:50%;vertical-align:middle;">
+      </p>
+      <div class="action-row"><a class="tab-link" href="{{ url_for('select_avatar') }}">Open Avatar Picker</a></div>
+    </article>
+    <article class="panel">
+      <h3>Change Password</h3>
+      <form method="post" action="{{ url_for('account_change_password') }}">
+        <input type="password" name="current_password" placeholder="Current password" required>
+        <input type="password" name="new_password" placeholder="New password (min 8)" minlength="8" required>
+        <input type="password" name="confirm_password" placeholder="Confirm new password" minlength="8" required>
+        <button type="submit">Update Password</button>
+      </form>
+    </article>
+    <article class="panel">
+      <h3>Quick Avatar Change</h3>
+      <form method="post" action="{{ url_for('account_change_avatar') }}">
+        <select name="avatar" required>
+          {% for a in avatars %}
+          <option value="{{ a }}" {% if user.photo_path and user.photo_path.endswith('/' ~ a) %}selected{% endif %}>{{ a }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit">Update Avatar</button>
+      </form>
+    </article>
+  </section>
+
+  <section id="chat" class="tab-panel">
+    <article class="panel">
+      <h3>Online Team Chat</h3>
+      <div class="chat-wrap">
+        <div><h4>Online Users</h4><ul id="onlineUsers"></ul></div>
+        <div>
+          <div id="chatMessages" class="chat-messages"></div>
+          <form id="chatForm">
+            <input id="chatInput" name="body" placeholder="Type a message..." maxlength="500" required>
+            <button type="submit">Send</button>
+          </form>
+        </div>
+      </div>
+    </article>
+  </section>
+</main>
+
+<script>
+const buttons=document.querySelectorAll('.tab-btn');
+const panels=document.querySelectorAll('.tab-panel');
+const initialTab="{{ initial_tab|default('overview') }}";
+function activateTab(tab){buttons.forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));panels.forEach(p=>p.classList.toggle('active',p.id===tab));}
+buttons.forEach(btn=>btn.addEventListener('click',()=>activateTab(btn.dataset.tab)));activateTab(initialTab);
+
+let lastId=0;
+async function ping(){try{await fetch('/api/presence/ping',{method:'POST'});}catch(_){}}
+async function loadOnline(){try{const r=await fetch('/api/online');const d=await r.json();document.getElementById('onlineUsers').innerHTML=d.map(u=>`<li>${u.username}</li>`).join('');}catch(_){}}
+async function loadMessages(){try{const r=await fetch('/api/chat/messages?since_id='+lastId);const d=await r.json();const box=document.getElementById('chatMessages');d.forEach(m=>{lastId=m.id;const row=document.createElement('div');row.textContent=`[${m.created_at}] ${m.username}: ${m.body}`;box.appendChild(row);});box.scrollTop=box.scrollHeight;}catch(_){}}
+const f=document.getElementById('chatForm');
+if(f){f.addEventListener('submit',async(e)=>{e.preventDefault();const i=document.getElementById('chatInput');const body=i.value.trim();if(!body)return;const fd=new FormData();fd.append('body',body);await fetch('/api/chat/messages',{method:'POST',body:fd});i.value='';loadMessages();});
+setInterval(ping,20000);setInterval(loadOnline,5000);setInterval(loadMessages,2000);ping();loadOnline();loadMessages();}
+</script>
+</body>
+</html>

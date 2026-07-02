@@ -1,0 +1,55 @@
+[submodule "converters/llm_engine"]
+	path = converters/llm_engine
+	url = https://github.com/ggml-org/llama.cpp.git
+[submodule "converters/diff_engine"]
+	path = converters/diff_engine
+	url = https://github.com/city96/ComfyUI-GGUF.git
+[submodule "interfaces/opencode_cli"]
+	path = interfaces/opencode_cli
+	url = https://github.com/anomalyco/opencode.git
+[submodule "interfaces/llama_cpp_server"]
+	path = interfaces/llama_cpp_server
+	url = https://github.com/ggml-org/llama.cpp.git
+[submodule "converters/stable_diffusion"]
+	path = converters/stable_diffusion
+	url = https://github.com/AUTOMATIC1111/stable-diffusion-webui.git
+	branch = dev
+[submodule "converters/diffusers_cpp"]
+	path = converters/diffusers_cpp
+	url = https://github.com/leejet/stable-diffusion.cpp.git
+[submodule "converters/ollama"]
+	path = converters/ollama
+	url = https://github.com/ollama/ollama.git
+[submodule "interfaces/comfyui"]
+	path = interfaces/comfyui
+	url = https://github.com/comfyanonymous/ComfyUI.git
+[submodule "interfaces/open_webui"]
+	path = interfaces/open_webui
+	url = https://github.com/open-webui/open-webui.git
+[submodule "miners/braiins_os"]
+	path = miners/braiins_os
+	url = https://github.com/braiins/braiins-os.git
+[submodule "miners/cgminer"]
+	path = miners/cgminer
+	url = https://github.com/ckolivas/cgminer.git
+[submodule "miners/bmminer"]
+	path = miners/bmminer
+	url = https://github.com/jameshilliard/bmminer.git
+[submodule "miners/whatsminer"]
+	path = miners/whatsminer
+	url = https://github.com/satoshiware/whatsminer-api.git
+[submodule "miners/stratum_proxy"]
+	path = miners/stratum_proxy
+	url = https://github.com/slush0/stratum-mining-proxy.git
+[submodule "embedded/poky"]
+	path = embedded/poky
+	url = https://github.com/yoctoproject/poky.git
+[submodule "embedded/meta-openembedded"]
+	path = embedded/meta-openembedded
+	url = https://github.com/openembedded/meta-openembedded.git
+[submodule "embedded/meta-petalinux"]
+	path = embedded/meta-petalinux
+	url = https://github.com/Xilinx/meta-petalinux.git
+[submodule "embedded/kas"]
+	path = embedded/kas
+	url = https://github.com/siemens/kas.git

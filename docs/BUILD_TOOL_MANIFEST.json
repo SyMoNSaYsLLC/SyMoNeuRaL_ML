@@ -1,0 +1,31 @@
+{
+  "version": "1.4.0-cuda-model-tools",
+  "included_engine_sources": {
+    "llama.cpp": "engines/llama.cpp",
+    "stable-diffusion.cpp": "engines/stable-diffusion.cpp"
+  },
+  "path_commands": [
+    "symon-server",
+    "symon-web",
+    "symon-cli",
+    "symon-build",
+    "symon-hf_to_gguf",
+    "symon-vram",
+    "symon-llama-server",
+    "symon-llama-cli",
+    "symon-sd-server"
+  ],
+  "build_scripts": [
+    "scripts/build_llama_cuda.sh",
+    "scripts/build_stable_diffusion_cuda.sh",
+    "scripts/build_all_cuda.sh",
+    "scripts/install_path_tools.sh"
+  ],
+  "api_routes_added": [
+    "GET /api/v1/tools/cuda",
+    "GET /api/v1/tools/models",
+    "POST /api/v1/tools/build",
+    "POST /api/v1/tools/convert/hf-to-gguf"
+  ],
+  "future_php": "php_bridge and docs/PHP_MIGRATION_NOTES.md"
+}

@@ -1,0 +1,50 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "cuda-release",
+      "displayName": "SyMoNeuRaL CUDA Release",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/symon",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "SYMON_CUDA": "ON",
+        "SYMON_BUILD_LLAMA": "ON",
+        "SYMON_BUILD_SD": "ON"
+      }
+    },
+    {
+      "name": "cpu-release",
+      "displayName": "SyMoNeuRaL CPU Release",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/symon-cpu",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "SYMON_CUDA": "OFF"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "cuda-all",
+      "configurePreset": "cuda-release",
+      "targets": [
+        "symon_all_cuda"
+      ]
+    },
+    {
+      "name": "cuda-llama",
+      "configurePreset": "cuda-release",
+      "targets": [
+        "symon_llama_cuda"
+      ]
+    },
+    {
+      "name": "cuda-sd",
+      "configurePreset": "cuda-release",
+      "targets": [
+        "symon_stable_diffusion_cuda"
+      ]
+    }
+  ]
+}

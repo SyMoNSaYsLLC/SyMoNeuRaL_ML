@@ -1,0 +1,25 @@
+=== SyMoNeuRaL Production Health Check ===
+Domain: symoneural.com
+WWW:    www.symoneural.com
+
+[32mPASS: service active: symoneural[0m
+[32mPASS: service enabled: symoneural[0m
+[32mPASS: service active: nginx[0m
+[32mPASS: service enabled: nginx[0m
+[32mPASS: port listening: 8000[0m
+[32mPASS: port listening: 80[0m
+[32mPASS: port listening: 443[0m
+[32mPASS: nginx config test passed (sudo)[0m
+[32mPASS: local app server header indicates gunicorn[0m
+[32mPASS: DNS resolves: symoneural.com -> 24.178.147.31[0m
+[32mPASS: DNS resolves: www.symoneural.com -> 104.21.22.186 172.67.206.158[0m
+[32mPASS: HTTP reachable (200): http://127.0.0.1:8000[0m
+[32mPASS: HTTP reachable (301): http://symoneural.com[0m
+[32mPASS: HTTP reachable (200): https://symoneural.com[0m
+[32mPASS: HTTP reachable (200): https://www.symoneural.com[0m
+[32mPASS: TLS cert healthy for symoneural.com (expires in 89 days)[0m
+
+=== Summary ===
+PASS: 16
+WARN: 0
+FAIL: 0

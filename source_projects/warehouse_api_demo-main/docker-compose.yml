@@ -1,0 +1,21 @@
+services:
+  server:
+    build: ./server
+    container_name: warehouse_server
+    restart: unless-stopped
+    expose:
+      - "8000"
+    ports:
+      - "8000:8000"
+
+  client:
+    build: ./client
+    container_name: warehouse_client
+    restart: unless-stopped
+    depends_on:
+      - server
+    environment:
+      API_URL: http://server:8000/warehouse
+      PRODUCTS_URL: http://server:8000/products
+    ports:
+      - "80:8001"

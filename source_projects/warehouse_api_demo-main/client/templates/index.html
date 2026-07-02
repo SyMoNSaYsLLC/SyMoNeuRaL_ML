@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order From Warehouse</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Order From Warehouse</h1>
+        <form method="post">
+            <select name="product" required>
+                {% for name in products %}
+                    <option value="{{ name }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+            <input type="number" name="order_qty" placeholder="Quantity">
+            <button type="submit" name="action" value="send">Send</button>
+            <button class="check_inv" type="button" onclick="window.location.href='/inventory'">
+                Check Inventory
+            </button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+app:
+  name: SyMoNeuRaL_ML
+  version: 1.5.1-user-docs-clean
+  host: 0.0.0.0
+  port: 8000
+  frontend_dir: frontend
+security:
+  require_api_key: false
+  api_key_env: SYMON_API_KEYS
+  allow_origins:
+    - http://localhost:8000
+    - http://127.0.0.1:8000
+models:
+  root: ./models
+  writer_model: ./models/llm/gemma-4-12b-it-Q4_K_M.gguf
+  code_model: ./models/llm/qwen2.5-coder-1.5b-instruct-q8_0.gguf
+  image_model: ./models/sd/v1-5-pruned-emaonly.safetensors
+engines:
+  writer:
+    enabled: true
+    kind: llama_cpp
+    route: writer
+    cmd: ["./engines/llama.cpp/build/bin/llama-server", "-m", "./models/llm/gemma-4-12b-it-Q4_K_M.gguf", "--host", "0.0.0.0", "--port", "8080", "--gpu-layers", "999"]
+    endpoint: http://127.0.0.1:8080/v1/chat/completions
+    health: http://127.0.0.1:8080/health
+    defaults: {temperature: 0.65, top_p: 0.95, max_tokens: 700}
+  code:
+    enabled: true
+    kind: llama_cpp
+    route: code
+    cmd: ["./engines/llama.cpp/build/bin/llama-server", "-m", "./models/llm/qwen2.5-coder-1.5b-instruct-q8_0.gguf", "--host", "0.0.0.0", "--port", "8081", "--gpu-layers", "999"]
+    endpoint: http://127.0.0.1:8081/v1/chat/completions
+    health: http://127.0.0.1:8081/health
+    defaults: {temperature: 0.2, top_p: 0.95, max_tokens: 1000}
+  image:
+    enabled: true
+    kind: stable_diffusion_cpp
+    route: image
+    cmd: ["./engines/stable-diffusion.cpp/build/bin/sd-server", "-m", "./models/sd/v1-5-pruned-emaonly.safetensors", "--listen-ip", "0.0.0.0", "--listen-port", "8082"]
+    endpoint: http://127.0.0.1:8082/sdapi/v1/txt2img
+    health: http://127.0.0.1:8082
+    defaults: {width: 512, height: 512, steps: 34, cfg_scale: 7.5, sampler_name: Euler a}
+
+orchestration:
+  exclusive_vram: true
+  resident_engine: writer
+  max_rounds: 2
+  wait_message: "This task requires a lot of processing power, but please wait — your code/image is coming soon."
+  handoff_workdir: /mnt/data/symoneural_handoff_jobs
+
+moe:
+  default_route: writer
+  public_routes:
+    writer: ["write", "rewrite", "summarize", "draft", "email", "story", "document", "question", "explain"]
+  handoff_routes:
+    image: ["image", "picture", "photo", "draw", "generate image", "stable diffusion", "render"]
+    code: ["code", "python", "bash", "cpp", "c++", "api", "script", "repo", "build", "test", "patch", "frontend", "backend", "bitbake", "docker", "systemd"]
+  hidden_background_workers:
+    code: "Qwen coder is not public. The writer manager stops itself, gives Qwen the GPU, receives a compressed artifact, restarts, assesses, and then releases to the user."
+    image: "Stable Diffusion is a worker. The writer manager stops itself, gives SD the GPU, receives image output, restarts, assesses, and then releases to the user."
+stripe:
+  enabled: false
+  secret_key_env: STRIPE_SECRET_KEY
+  webhook_secret_env: STRIPE_WEBHOOK_SECRET
+  price_id_env: STRIPE_PRICE_ID
+cloudflare:
+  tunnel_name: symoneural-local-ml
+  hostname_env: SYMON_PUBLIC_HOSTNAME
+
+tools:
+  path_commands:
+    - symon-server
+    - symon-web
+    - symon-cli
+    - symon-build
+    - symon-hf_to_gguf
+    - symon-vram
+  build:
+    llama_cuda_script: ./scripts/build_llama_cuda.sh
+    stable_diffusion_cuda_script: ./scripts/build_stable_diffusion_cuda.sh
+    all_cuda_script: ./scripts/build_all_cuda.sh

@@ -1,0 +1,56 @@
+[
+  {
+    "uploaded_name": "Symon_MoE-main.zip",
+    "size_bytes": 210263,
+    "sha256": "71126b63e3f0451712c02621bb22edccf8e7a485040821d0d18f3b60b5373247",
+    "top_level": [
+      "Symon_MoE-main"
+    ],
+    "file_count": 243
+  },
+  {
+    "uploaded_name": "SyMoNeuRaL_Local_ML.zip",
+    "size_bytes": 102771485,
+    "sha256": "e47fd187a24cab7ed5c1a072bcf45851a9fb21819f4bc942e1a7ac7f48a9e40c",
+    "top_level": [
+      "SyMoNeuRaL_Local_ML"
+    ],
+    "file_count": 2787
+  },
+  {
+    "uploaded_name": "SyMoNeuRaL_Local_ML_exclusive_vram_handoff.zip",
+    "size_bytes": 102642807,
+    "sha256": "2079c1cb7252e64228a70e2c747b89a9b5bb4b653f94abde020c34d109660d49",
+    "top_level": [
+      "SyMoNeuRaL_Local_ML"
+    ],
+    "file_count": 2458
+  },
+  {
+    "uploaded_name": "SyMoNeuRaL_Local_ML_production_background_coder.zip",
+    "size_bytes": 102595034,
+    "sha256": "e3e4fa46b88f4add80c17e17bcc5c41a4ce4f60ac9e90d18137fcb9ac88f97eb",
+    "top_level": [
+      "SyMoNeuRaL_Local_ML"
+    ],
+    "file_count": 2450
+  },
+  {
+    "uploaded_name": "warehouse_api_demo-main.zip",
+    "size_bytes": 8080,
+    "sha256": "f1b93f5fd47ecd6d72154e50b8379146cddbaaa28c85ea5be59300c865805138",
+    "top_level": [
+      "warehouse_api_demo-main"
+    ],
+    "file_count": 18
+  },
+  {
+    "uploaded_name": "fine_tuning-main.zip",
+    "size_bytes": 13673,
+    "sha256": "260d000bc89388c6fe4b50cb22185f06f69daa29a415321dfb6e85830bdc60db",
+    "top_level": [
+      "fine_tuning-main"
+    ],
+    "file_count": 4
+  }
+]

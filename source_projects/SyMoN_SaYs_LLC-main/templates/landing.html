@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ ui_get('landing.title', 'SyMoNeuRaL') }}</title>
+  <meta name="description" content="SyMoNeuRaL delivers enterprise-grade systems integration, workflow automation, and modernization services.">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"ProfessionalService",
+    "name":"SyMoNeuRaL",
+    "areaServed":"Lake Norman, NC",
+    "serviceType":["Systems Integration","Workflow Automation","Legacy Modernization","Operational Support"]
+  }
+  </script>
+</head>
+<body>
+<div class="bg-grid"></div>
+
+<main class="layout landing-layout">
+  <section class="panel landing-panel enterprise-hero">
+    <div class="landing-badge">{{ ui_get('landing.badge', '') }}</div>
+
+    <div class="landing-header">
+      <img src="{{ url_for('static', filename='brand/symonicon.png') }}" alt="SyMoNeuRaL icon" class="brand-icon">
+      <div>
+        <h2>{{ ui_get('landing.headline', 'SyMoNeuRaL') }}</h2>
+        <p class="landing-lead">{{ ui_get('landing.subheadline', '') }}</p>
+      </div>
+    </div>
+
+    <div class="landing-featured">
+      <img src="{{ url_for('static', filename='brand/symoneural.jpg') }}" alt="SyMoNeuRaL architecture">
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi"><strong>Integration-first</strong><span>Cross-platform system design</span></div>
+      <div class="kpi"><strong>Automation-ready</strong><span>Repeatable workflow execution</span></div>
+      <div class="kpi"><strong>Production-safe</strong><span>Controlled rollout and support</span></div>
+    </div>
+
+    <h3>{{ ui_get('landing.servicesTitle', 'Core Services') }}</h3>
+    <ul class="core-services">
+      {% for item in ui_get('landing.services', []) %}
+      <li>{{ item }}</li>
+      {% endfor %}
+    </ul>
+
+    <div class="action-row">
+      <a class="tab-link cta-primary" href="{{ url_for('register') }}">{{ ui_get('landing.ctaCreate', 'Create Account') }}</a>
+      <a class="tab-link" href="{{ url_for('login') }}">{{ ui_get('landing.ctaLogin', 'Client Login') }}</a>
+      <a class="tab-link" href="mailto:gmcdonald@symoneural.com,bhesley@symoneural.com?subject=Service%20Request">{{ ui_get('landing.ctaRequest', 'Request Service') }}</a>
+    </div>
+  </section>
+</main>
+</body>
+</html>

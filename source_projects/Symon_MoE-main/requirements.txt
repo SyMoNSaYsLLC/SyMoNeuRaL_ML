@@ -1,0 +1,29 @@
+# Symon_MoE Orchestration Dependencies
+# Install with: pip install -r requirements.txt
+
+# --- LLM engine (llama.cpp) dependencies ---
+# See converters/llm_engine/requirements/requirements-convert.txt for the full list.
+# The essentials are listed here for convenience.
+torch>=2.0.0
+transformers>=4.40.0
+sentencepiece
+protobuf
+numpy
+
+# --- Diffusion engine (ComfyUI-GGUF) dependencies ---
+# The convert.py tool in diff_engine/tools only needs:
+gguf>=0.10.0
+safetensors>=0.4.0
+
+# --- Backend API dependencies ---
+fastapi>=0.111.0
+uvicorn>=0.30.0
+pydantic>=2.7.0
+httpx>=0.27.0
+aiosqlite>=0.20.0
+ptyprocess>=0.7.0
+psutil>=5.9.8
+websockets>=12.0
+
+# --- Calculator app ---
+sympy>=1.12
