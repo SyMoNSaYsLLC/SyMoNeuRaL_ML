@@ -2,6 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+mkdir -p "$PWD/data/symoneural_handoff_jobs" "$PWD/data/symoneural_coder_jobs" "$PWD/logs" "$PWD/models"
 python3 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip setuptools wheel

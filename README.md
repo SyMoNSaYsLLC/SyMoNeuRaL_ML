@@ -2,7 +2,7 @@
 
 **NVIDIA-focused local 3-model MoE web server with CUDA model tools, llama.cpp, stable-diffusion.cpp, FastAPI, and exclusive VRAM handoff.**
 
-Version: `1.5.1-user-docs-clean`
+Version: `1.5.2-install-doctor-docs-hotfix`
 
 SyMoNeuRaL_ML is a local/private ML server for NVIDIA GPU systems. It provides a production-style web UI, API, CUDA engine builds, model conversion tools, VRAM monitoring, and a 3-model handoff workflow.
 
@@ -54,7 +54,7 @@ User
  → Gemma Writer Manager cleans/specs request
  → Writer Manager stops
  → Qwen Code Worker starts with the GPU available
- → Qwen builds/tests under /mnt/data/symoneural_handoff_jobs
+ → Qwen builds/tests under the project data folder, usually `data/symoneural_handoff_jobs`
  → Qwen returns a .tar.gz artifact
  → Qwen stops
  → Writer Manager restarts
@@ -129,6 +129,57 @@ Open:
 
 ```text
 http://127.0.0.1:8000
+```
+
+## Project data folders
+
+The default install uses project-local data folders so normal users do not need write access to `/mnt`:
+
+```text
+data/symoneural_handoff_jobs
+data/symoneural_coder_jobs
+data/rag
+data/fine_tune
+logs
+models
+```
+
+Advanced users can point handoff work elsewhere with environment variables, but the default user install should stay inside the project directory.
+
+## Clean CUDA rebuild after zip extraction / clock skew
+
+If the CUDA build shows warnings like:
+
+```text
+Clock skew detected. Your build may be incomplete.
+```
+
+normalize the vendored engine timestamps before rebuilding:
+
+```bash
+find engines/llama.cpp engines/stable-diffusion.cpp -exec touch {} +
+
+./scripts/install.sh
+./scripts/doctor.sh
+./scripts/build_all_cuda.sh
+```
+
+This is mainly needed after extracting source archives whose file timestamps are ahead of the system clock.
+
+## Doctor/import troubleshooting
+
+`doctor.sh` should use the project virtual environment when `.venv` exists. If Python import checks fail even though install succeeded, rerun:
+
+```bash
+source .venv/bin/activate
+./scripts/doctor.sh
+```
+
+Then confirm:
+
+```bash
+which python
+python -c "import fastapi, anyio; print('imports ok')"
 ```
 
 ## PATH commands
@@ -263,7 +314,7 @@ PHP later: production web/API control plane
 
 ## Source layout
 
-Original project sources are preserved under:
+Reference source trees, upstream engine sources, and migrated project references may be preserved under:
 
 ```text
 source_projects/
