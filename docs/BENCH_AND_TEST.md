@@ -2,7 +2,7 @@
 
 The scripts create log files automatically. Do not wrap them with `tee`.
 
-They also auto-run through `.venv/bin/python` when `.venv` exists, so normal usage is:
+They auto-run through `.venv/bin/python` or `.venv/bin/python3` when either exists, so normal usage is:
 
 ```bash
 python test.py
@@ -30,7 +30,9 @@ logs/test_YYYYMMDD_HHMMSS.log
 logs/test_YYYYMMDD_HHMMSS.json
 ```
 
-If the server is not running, `python test.py` will still complete local checks and mark API checks as skipped warnings unless `--require-server` is used.
+If the server is not running, `python test.py` completes local checks and marks API checks as skipped warnings unless `--require-server` is used.
+
+If the API is healthy but direct local import fails due to a shell Python mismatch, the script treats that as a warning unless `--strict-import` is used.
 
 ## Benchmark
 
@@ -53,6 +55,7 @@ Useful options:
 python test.py --no-api
 python test.py --no-job
 python test.py --require-server
+python test.py --strict-import
 python bench.py --skip-code --skip-image
 python bench.py --skip-writer --skip-image
 python bench.py --skip-writer --skip-code
