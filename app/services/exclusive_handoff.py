@@ -173,8 +173,8 @@ class ExclusiveHandoffManager:
             (workspace / "USER_PROMPT.md").write_text(job.user_prompt, encoding="utf-8")
 
             # Keep only writer up while deciding. This is the low-VRAM idle state.
-            settings.switch_exclusive_sync("writer")
             writer_endpoint = engines["writer"]["endpoint"]
+            self._switch_and_wait(settings, writer_endpoint, "writer")
 
             route_info = self._manager_route(writer_endpoint, job.user_prompt, requested_route)
             route = route_info.get("route", requested_route or "writer")
@@ -210,14 +210,14 @@ class ExclusiveHandoffManager:
                 self._log(job_id, f"handoff round {round_idx} route={route}")
 
                 if route == "code":
-                    settings.switch_exclusive_sync("code")
+                    self._switch_and_wait(settings, engines["code"]["endpoint"], "code")
                     result = self._run_code_worker(job_id, engines["code"]["endpoint"], clean, quality_bar, revision)
                 else:
-                    settings.switch_exclusive_sync("image")
+                    self._switch_and_wait(settings, engines["image"]["endpoint"], "image")
                     result = self._run_image_worker(job_id, engines["image"]["endpoint"], {**image_options, "prompt": clean}, revision)
 
-                # Bring writer back as quality gate.
-                settings.switch_exclusive_sync("writer")
+                # Bring writer back as quality gate and wait until llama-server finishes model warmup.
+                self._switch_and_wait(settings, writer_endpoint, "writer")
                 approved, revision, final_msg = self._assess(writer_endpoint, job.user_prompt, clean, route, result, quality_bar)
                 self._log(job_id, f"writer assessment approved={approved}: {final_msg[:180]}")
                 self._update(job_id, attempts=[*self.jobs[job_id].attempts, {"round": round_idx, "approved": approved, "revision": revision, "message": final_msg}])
@@ -240,6 +240,48 @@ class ExclusiveHandoffManager:
             except Exception:
                 pass
             self._update(job_id, status="failed", error=repr(exc), result_text=f"Task failed: {exc!r}")
+
+
+    def _switch_and_wait(self, settings: Any, endpoint: str, engine_name: str, timeout: float | None = None) -> None:
+        # Switch to an exclusive engine and wait until its HTTP endpoint is actually usable.
+        # llama-server can bind the port before the model is ready. During that window
+        # /v1/chat/completions returns 503, which previously caused handoffs to fail.
+        settings.switch_exclusive_sync(engine_name)
+        self._wait_for_endpoint(endpoint, engine_name, timeout=timeout)
+
+    def _wait_for_endpoint(self, endpoint: str, label: str, timeout: float | None = None) -> None:
+        import urllib.parse
+
+        deadline = time.time() + float(timeout or os.getenv("SYMON_ENGINE_READY_TIMEOUT", "240"))
+        last_error = ""
+
+        parsed = urllib.parse.urlparse(endpoint)
+        root_url = f"{parsed.scheme}://{parsed.netloc}/"
+
+        while time.time() < deadline:
+            try:
+                with httpx.Client(timeout=12.0) as client:
+                    if "/v1/chat/completions" in endpoint:
+                        resp = client.post(endpoint, json={
+                            "messages": [{"role": "user", "content": "ready"}],
+                            "max_tokens": 1,
+                            "stream": False,
+                            "temperature": 0,
+                        })
+                        if resp.status_code < 500:
+                            return
+                        last_error = f"HTTP {resp.status_code}: {resp.text[:300]}"
+                    else:
+                        resp = client.get(root_url)
+                        if resp.status_code < 500:
+                            return
+                        last_error = f"HTTP {resp.status_code}: {resp.text[:300]}"
+            except Exception as exc:
+                last_error = repr(exc)
+
+            time.sleep(float(os.getenv("SYMON_ENGINE_READY_POLL", "1.0")))
+
+        raise RuntimeError(f"{label} endpoint not ready after timeout: {endpoint}; last_error={last_error}")
 
     def _manager_route(self, endpoint: str, prompt: str, requested_route: str | None) -> dict[str, Any]:
         if requested_route in {"writer", "code", "image"}:
