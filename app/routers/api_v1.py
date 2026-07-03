@@ -20,6 +20,7 @@ from app.services.llama_cpp import build_chat_payload, stream_chat_completion
 from app.services.moe_router import choose_expert
 from app.services.sd_cpp import image_payload_attempts
 from app.workers.job_manager import JOB_MANAGER
+from app.services.symon_adaptive_profiles import apply_image_profile
 
 router = APIRouter(prefix="/api/v1", tags=["SyMoNeuRaL Local ML v1"], dependencies=[Depends(require_api_key)])
 
@@ -173,6 +174,7 @@ async def openai_chat_completions(data: dict, request: Request):
 async def images_generations(data: dict, request: Request):
     # Compatibility route. It now runs image exclusively, then restores the writer.
     cfg = engine_cfg("image")
+    data = apply_image_profile(data.get("prompt") or data.get("input") or "", data)
     request.app.state.engine_manager.switch_exclusive_sync("image")
     errors = []
     try:

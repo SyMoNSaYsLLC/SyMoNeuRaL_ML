@@ -17,6 +17,7 @@ import httpx
 
 from app.services.llama_cpp import build_chat_payload
 from app.services.sd_cpp import image_payload_attempts
+from app.services.symon_adaptive_profiles import apply_image_profile, apply_runtime_env, choose_profile, profile_log
 
 
 MANAGER_SYSTEM = """
@@ -173,6 +174,8 @@ class ExclusiveHandoffManager:
             (workspace / "USER_PROMPT.md").write_text(job.user_prompt, encoding="utf-8")
 
             # Keep only writer up while deciding. This is the low-VRAM idle state.
+            manager_profile = apply_runtime_env(choose_profile("writer", job.user_prompt, job.user_prompt, image_options, phase="manager"))
+            self._log(job_id, profile_log(manager_profile))
             writer_endpoint = engines["writer"]["endpoint"]
             self._switch_and_wait(settings, writer_endpoint, "writer")
 
@@ -184,6 +187,15 @@ class ExclusiveHandoffManager:
             user_message = route_info.get("user_message") or ""
             quality_bar = route_info.get("quality_bar") or "Result satisfies the user request."
 
+            runtime_profile = apply_runtime_env(choose_profile(route, job.user_prompt, clean, image_options))
+            self._log(job_id, profile_log(runtime_profile))
+            route_info["runtime_profile"] = {
+                "role": runtime_profile.role,
+                "name": runtime_profile.name,
+                "reason": runtime_profile.reason,
+                "env": runtime_profile.env,
+                "options": runtime_profile.options,
+            }
             self._update(job_id, kind=route, clean_request=clean, user_message=user_message, quality_bar=quality_bar)
             (workspace / "MANAGER_ROUTE.json").write_text(json.dumps(route_info, indent=2), encoding="utf-8")
 
@@ -193,7 +205,7 @@ class ExclusiveHandoffManager:
                     writer_endpoint,
                     system=WRITER_FINAL_SYSTEM,
                     prompt=f"USER REQUEST:\n{job.user_prompt}\n\nGive the user the best direct answer.",
-                    max_tokens=1200,
+                    max_tokens=int(os.getenv("SYMON_WRITER_MAX_TOKENS", "1200")),
                 )
                 self._update(job_id, status="done", result_text=answer)
                 return
@@ -210,13 +222,19 @@ class ExclusiveHandoffManager:
                 self._log(job_id, f"handoff round {round_idx} route={route}")
 
                 if route == "code":
+                    runtime_profile = apply_runtime_env(choose_profile("code", job.user_prompt, clean, image_options))
+                    self._log(job_id, profile_log(runtime_profile))
                     self._switch_and_wait(settings, engines["code"]["endpoint"], "code")
                     result = self._run_code_worker(job_id, engines["code"]["endpoint"], clean, quality_bar, revision)
                 else:
+                    profiled_image_options = apply_image_profile(clean, image_options)
+                    self._log(job_id, f"[profile] image/{profiled_image_options.get('_profile')}: {profiled_image_options.get('width')}x{profiled_image_options.get('height')} steps={profiled_image_options.get('steps')} reason={profiled_image_options.get('_profile_reason')}")
                     self._switch_and_wait(settings, engines["image"]["endpoint"], "image")
-                    result = self._run_image_worker(job_id, engines["image"]["endpoint"], {**image_options, "prompt": clean}, revision)
+                    result = self._run_image_worker(job_id, engines["image"]["endpoint"], {**profiled_image_options, "prompt": clean}, revision)
 
                 # Bring writer back as quality gate and wait until llama-server finishes model warmup.
+                manager_profile = apply_runtime_env(choose_profile("writer", job.user_prompt, clean, image_options, phase="manager"))
+                self._log(job_id, profile_log(manager_profile))
                 self._switch_and_wait(settings, writer_endpoint, "writer")
                 approved, revision, final_msg = self._assess(writer_endpoint, job.user_prompt, clean, route, result, quality_bar)
                 self._log(job_id, f"writer assessment approved={approved}: {final_msg[:180]}")

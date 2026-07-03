@@ -98,9 +98,21 @@ class EngineProcessManager:
             if not self._has_any(cmd, {"-np", "--parallel"}):
                 cmd.extend(["-np", os.getenv(f"SYMON_{env_prefix}_NP", "1")])
             if not self._has_any(cmd, {"-b", "--batch-size"}):
-                cmd.extend(["-b", os.getenv("SYMON_DEFAULT_BATCH", "512")])
+                batch = (
+                    os.getenv(f"SYMON_{env_prefix}_BATCH")
+                    or (os.getenv("SYMON_CHAT_BATCH") if name == "writer" else None)
+                    or (os.getenv("SYMON_CODE_BATCH") if name == "code" else None)
+                    or os.getenv("SYMON_DEFAULT_BATCH", "512")
+                )
+                cmd.extend(["-b", batch])
             if not self._has_any(cmd, {"-ub", "--ubatch-size"}):
-                cmd.extend(["-ub", os.getenv("SYMON_DEFAULT_UBATCH", "128")])
+                ubatch = (
+                    os.getenv(f"SYMON_{env_prefix}_UBATCH")
+                    or (os.getenv("SYMON_CHAT_UBATCH") if name == "writer" else None)
+                    or (os.getenv("SYMON_CODE_UBATCH") if name == "code" else None)
+                    or os.getenv("SYMON_DEFAULT_UBATCH", "128")
+                )
+                cmd.extend(["-ub", ubatch])
         return cmd
 
     async def start_all(self) -> None:
