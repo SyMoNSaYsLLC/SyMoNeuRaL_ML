@@ -1,35 +1,35 @@
 # RTX 5070 Ti Permanent 14-15GB VRAM Profile
 
-This project is tuned for the user's NVIDIA GeForce RTX 5070 Ti 16GB card.
+This repo is tuned for the user's NVIDIA GeForce RTX 5070 Ti 16GB card.
 
-Do not revert SyMoNeuRaL startup back to the old conservative ~8GB llama-server profile.
-
-Permanent target:
-
-- llama.cpp GPU layers: 999
-- writer context: 65536
-- writer batch: 4096
-- writer ubatch: 512
-- writer parallel: 1
-- code context: 65536
-- code batch: 4096
-- code ubatch: 512
-- code parallel: 1
-- image default: 1152x1152, 40 steps
-- target total GPU memory: 14000-15360 MiB
-
-Canonical config:
-
-- `config/rtx5070ti_14_15gb.env`
-- `scripts/symon_env_5070ti_max.sh`
-- `scripts/symon`
-
-Canonical startup command:
+Canonical startup:
 
 ```bash
 ./scripts/symon
 ```
 
-Reason:
+Do not use old launcher names as source-of-truth. They are compatibility wrappers.
 
-The RTX 5070 Ti has 16GB VRAM. Conservative 8GB profiles waste the card and have repeatedly caused confusion. All launchers should source `scripts/symon_env_5070ti_max.sh` so every normal start uses the 14-15GB profile unless the user explicitly overrides it for debugging.
+Permanent target:
+
+- Total GPU memory: 14000-15360 MiB, including KDE/desktop
+- Writer process should appear as `bin/symon-llm-server`, not the upstream `llama-server`
+- llama.cpp GPU layers: 999
+- writer context: 294912
+- writer parallel: 2
+- writer batch: 4096
+- writer ubatch: 512
+- code context: 294912
+- code parallel: 1
+- image default: 1216x1216, 40 steps
+
+Why this exists:
+
+Adaptive routing previously lowered the writer/manager context back to 8192/16384 and restarted the server around an 8-9GB profile. That wastes the 5070 Ti and caused repeated regressions. The adaptive profile code now keeps the permanent context floor whenever `SYMON_FORCE_TEXT_MAX=1`.
+
+Source of truth:
+
+- `config/rtx5070ti_14_15gb.env`
+- `scripts/symon`
+- `app/services/process_manager.py`
+- `app/services/symon_adaptive_profiles.py`

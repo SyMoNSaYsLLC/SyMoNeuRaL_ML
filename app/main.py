@@ -43,14 +43,29 @@ def create_app() -> FastAPI:
 
     @app.get("/api/health")
     def legacy_health():
-        return {"ok": True, "service": "SyMoNeuRaL Local ML", "engines": app.state.engine_manager.status()}
+        manager = getattr(app.state, "engine_manager", None)
+        return {
+            "ok": True,
+            "service": "SyMoNeuRaL Local ML",
+            "engines": manager.status() if manager else {},
+        }
+
+    frontend_dir = ROOT / "frontend"
+    static_dir = ROOT / "static"
+    css_dir = frontend_dir / "css"
+    js_dir = frontend_dir / "js"
+
+    if static_dir.exists():
+        app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+    if css_dir.exists():
+        app.mount("/css", StaticFiles(directory=str(css_dir)), name="css")
+    if js_dir.exists():
+        app.mount("/js", StaticFiles(directory=str(js_dir)), name="js")
 
     @app.get("/")
     def index():
-        return FileResponse(ROOT / "frontend" / "index.html")
+        return FileResponse(frontend_dir / "index.html")
 
-    app.mount("/css", StaticFiles(directory=str(ROOT / "frontend" / "css")), name="css")
-    app.mount("/js", StaticFiles(directory=str(ROOT / "frontend" / "js")), name="js")
     return app
 
 
@@ -59,17 +74,3 @@ app = create_app()
 if __name__ == "__main__":
     settings = get_settings()
     uvicorn.run(app, host=settings.host, port=settings.port)
-
-
-# Simple one-page chat frontend.
-ROOT_DIR = Path(__file__).resolve().parents[1]
-FRONTEND_DIR = ROOT_DIR / "frontend"
-STATIC_DIR = ROOT_DIR / "static"
-
-if STATIC_DIR.exists() and "static" not in [r.name for r in app.routes]:
-    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
-
-@app.get("/")
-async def simple_chat_index():
-    return FileResponse(str(FRONTEND_DIR / "index.html"))
-

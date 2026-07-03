@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
-
-# SyMoNeuRaL permanent RTX 5070 Ti 14-15GB VRAM profile.
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-if [ -f "$ROOT/scripts/symon_env_5070ti_max.sh" ]; then
-  source "$ROOT/scripts/symon_env_5070ti_max.sh"
-fi
 set -euo pipefail
-cd "$(dirname "$0")/.."
-source .venv/bin/activate 2>/dev/null || true
-python main.py
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+echo "This launcher is legacy. Using canonical ./scripts/symon"
+exec "$ROOT/scripts/symon" "$@"

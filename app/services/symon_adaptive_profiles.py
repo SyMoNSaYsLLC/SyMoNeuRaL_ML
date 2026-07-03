@@ -30,9 +30,58 @@ def _env_float(name: str, default: float) -> float:
         return default
 
 
+def _env_bool(name: str, default: bool = False) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on", "force", "max"}
+
+
 def _has(text: str, terms: list[str]) -> bool:
     t = (text or "").lower()
     return any(x in t for x in terms)
+
+
+def _text_ctx(role: str, chosen: int) -> int:
+    """
+    Adaptive prompts are allowed to raise work quality, not drop the RTX 5070 Ti
+    back to an 8GB conservative profile. When SYMON_FORCE_TEXT_MAX=1, every
+    manager/writer/helper/code profile keeps the permanent floor from env.
+    """
+    if not _env_bool("SYMON_FORCE_TEXT_MAX", True):
+        return chosen
+
+    floors = [
+        _env_int("SYMON_MIN_TEXT_CTX", chosen),
+        _env_int("SYMON_LLAMA_CTX", chosen),
+    ]
+    if role in {"manager", "writer", "helper"}:
+        floors.extend([
+            _env_int("SYMON_WRITER_CTX", chosen),
+            _env_int("SYMON_CHAT_CTX", chosen),
+        ])
+    if role == "code":
+        floors.append(_env_int("SYMON_CODE_CTX", chosen))
+
+    return max([chosen, *floors])
+
+
+def _text_batch(role: str, default: int) -> str:
+    if role == "code":
+        return os.getenv("SYMON_CODE_BATCH", os.getenv("SYMON_LLAMA_BATCH", str(default)))
+    return os.getenv("SYMON_WRITER_BATCH", os.getenv("SYMON_CHAT_BATCH", os.getenv("SYMON_LLAMA_BATCH", str(default))))
+
+
+def _text_ubatch(role: str, default: int) -> str:
+    if role == "code":
+        return os.getenv("SYMON_CODE_UBATCH", os.getenv("SYMON_LLAMA_UBATCH", str(default)))
+    return os.getenv("SYMON_WRITER_UBATCH", os.getenv("SYMON_CHAT_UBATCH", os.getenv("SYMON_LLAMA_UBATCH", str(default))))
+
+
+def _text_parallel(role: str, default: int) -> str:
+    if role == "code":
+        return os.getenv("SYMON_CODE_NP", os.getenv("SYMON_CODE_PARALLEL", os.getenv("SYMON_LLAMA_PARALLEL", str(default))))
+    return os.getenv("SYMON_WRITER_NP", os.getenv("SYMON_WRITER_PARALLEL", os.getenv("SYMON_CHAT_PARALLEL", os.getenv("SYMON_LLAMA_PARALLEL", str(default)))))
 
 
 def _explicit_size(prompt: str) -> tuple[int, int] | None:
@@ -57,12 +106,16 @@ def choose_manager_profile(prompt: str, clean: str | None = None) -> RuntimeProf
         name, ctx, max_tokens, reason = "fast", 8192, 900, "quick manager prompt"
     else:
         name, ctx, max_tokens, reason = "balanced", 8192, 1200, "balanced manager default"
+    ctx = _text_ctx("manager", ctx)
     return RuntimeProfile("manager", name, "writer", reason, {
         "SYMON_CHAT_CTX": str(ctx),
         "SYMON_WRITER_CTX": str(ctx),
         "SYMON_WRITER_MAX_TOKENS": str(max_tokens),
         "SYMON_CHAT_GPU_LAYERS": "999",
         "SYMON_WRITER_GPU_LAYERS": "999",
+        "SYMON_WRITER_BATCH": _text_batch("writer", 4096),
+        "SYMON_WRITER_UBATCH": _text_ubatch("writer", 512),
+        "SYMON_WRITER_NP": _text_parallel("writer", 2),
     }, {"max_tokens": max_tokens, "temperature": 0.2})
 
 
@@ -74,12 +127,16 @@ def choose_writer_profile(prompt: str, clean: str | None = None) -> RuntimeProfi
         name, ctx, max_tokens, reason = "fast", 8192, 900, "short writer output"
     else:
         name, ctx, max_tokens, reason = "balanced", 8192, 1400, "balanced writer output"
+    ctx = _text_ctx("writer", ctx)
     return RuntimeProfile("writer", name, "writer", reason, {
         "SYMON_CHAT_CTX": str(ctx),
         "SYMON_WRITER_CTX": str(ctx),
         "SYMON_WRITER_MAX_TOKENS": str(max_tokens),
         "SYMON_CHAT_GPU_LAYERS": "999",
         "SYMON_WRITER_GPU_LAYERS": "999",
+        "SYMON_WRITER_BATCH": _text_batch("writer", 4096),
+        "SYMON_WRITER_UBATCH": _text_ubatch("writer", 512),
+        "SYMON_WRITER_NP": _text_parallel("writer", 2),
     }, {"max_tokens": max_tokens, "temperature": 0.25})
 
 
@@ -89,10 +146,14 @@ def choose_helper_profile(prompt: str, clean: str | None = None) -> RuntimeProfi
         name, ctx, reason = "diagnostic", 16384, "diagnostic/helper workload"
     else:
         name, ctx, reason = "normal", 8192, "normal helper workload"
+    ctx = _text_ctx("helper", ctx)
     return RuntimeProfile("helper", name, "writer", reason, {
         "SYMON_HELPER_CTX": str(ctx),
         "SYMON_WRITER_CTX": str(ctx),
         "SYMON_CHAT_CTX": str(ctx),
+        "SYMON_WRITER_BATCH": _text_batch("writer", 4096),
+        "SYMON_WRITER_UBATCH": _text_ubatch("writer", 512),
+        "SYMON_WRITER_NP": _text_parallel("writer", 2),
     }, {"max_tokens": 1400})
 
 
@@ -104,11 +165,13 @@ def choose_code_profile(prompt: str, clean: str | None = None) -> RuntimeProfile
         name, ctx, max_tokens, reason = "fast-code", 16384, 2600, "small code/script request"
     else:
         name, ctx, max_tokens, reason = "balanced-code", 24576, 3200, "balanced code request"
+    ctx = _text_ctx("code", ctx)
     return RuntimeProfile("code", name, "code", reason, {
         "SYMON_CODE_CTX": str(ctx),
         "SYMON_CODE_GPU_LAYERS": "999",
-        "SYMON_CODE_BATCH": os.getenv("SYMON_CODE_BATCH", "2048"),
-        "SYMON_CODE_UBATCH": os.getenv("SYMON_CODE_UBATCH", "512"),
+        "SYMON_CODE_BATCH": _text_batch("code", 4096),
+        "SYMON_CODE_UBATCH": _text_ubatch("code", 512),
+        "SYMON_CODE_NP": _text_parallel("code", 1),
         "SYMON_CODER_MAX_TOKENS": str(max_tokens),
     }, {"max_tokens": max_tokens, "temperature": 0.15})
 
@@ -127,9 +190,9 @@ def choose_image_profile(prompt: str, requested: dict[str, Any] | None = None) -
 
     profiles = {
         "fast": ("fast", _env_int("SYMON_IMAGE_FAST_WIDTH", 768), _env_int("SYMON_IMAGE_FAST_HEIGHT", 768), _env_int("SYMON_IMAGE_FAST_STEPS", 24), _env_float("SYMON_IMAGE_FAST_CFG", 7.0), "fast/preview image prompt"),
-        "balanced": ("balanced", _env_int("SYMON_IMAGE_BALANCED_WIDTH", 1024), _env_int("SYMON_IMAGE_BALANCED_HEIGHT", 1024), _env_int("SYMON_IMAGE_BALANCED_STEPS", 30), _env_float("SYMON_IMAGE_BALANCED_CFG", 7.5), "balanced image default"),
-        "quality": ("quality", _env_int("SYMON_IMAGE_QUALITY_WIDTH", 1024), _env_int("SYMON_IMAGE_QUALITY_HEIGHT", 1024), _env_int("SYMON_IMAGE_QUALITY_STEPS", 36), _env_float("SYMON_IMAGE_QUALITY_CFG", 7.5), "professional/high-quality image prompt"),
-        "max": ("max", _env_int("SYMON_IMAGE_MAX_WIDTH", 1152), _env_int("SYMON_IMAGE_MAX_HEIGHT", 1152), _env_int("SYMON_IMAGE_MAX_STEPS", 40), _env_float("SYMON_IMAGE_MAX_CFG", 7.5), "maximum image detail prompt"),
+        "balanced": ("balanced", _env_int("SYMON_IMAGE_BALANCED_WIDTH", 1152), _env_int("SYMON_IMAGE_BALANCED_HEIGHT", 1152), _env_int("SYMON_IMAGE_BALANCED_STEPS", 40), _env_float("SYMON_IMAGE_BALANCED_CFG", 7.5), "balanced image default"),
+        "quality": ("quality", _env_int("SYMON_IMAGE_QUALITY_WIDTH", 1152), _env_int("SYMON_IMAGE_QUALITY_HEIGHT", 1152), _env_int("SYMON_IMAGE_QUALITY_STEPS", 40), _env_float("SYMON_IMAGE_QUALITY_CFG", 7.5), "professional/high-quality image prompt"),
+        "max": ("max", _env_int("SYMON_IMAGE_MAX_WIDTH", 1216), _env_int("SYMON_IMAGE_MAX_HEIGHT", 1216), _env_int("SYMON_IMAGE_MAX_STEPS", 40), _env_float("SYMON_IMAGE_MAX_CFG", 7.5), "maximum image detail prompt"),
         "stress": ("stress", _env_int("SYMON_IMAGE_STRESS_WIDTH", 1216), _env_int("SYMON_IMAGE_STRESS_HEIGHT", 1216), _env_int("SYMON_IMAGE_STRESS_STEPS", 40), _env_float("SYMON_IMAGE_STRESS_CFG", 7.5), "VRAM stress/benchmark image prompt"),
     }
 
@@ -202,8 +265,8 @@ def profile_log(profile: RuntimeProfile) -> str:
     if profile.role == "image":
         return f"[profile] {profile.role}/{profile.name}: {profile.options.get('width')}x{profile.options.get('height')} steps={profile.options.get('steps')} reason={profile.reason}"
     if profile.role == "code":
-        return f"[profile] {profile.role}/{profile.name}: ctx={profile.env.get('SYMON_CODE_CTX')} max_tokens={profile.options.get('max_tokens')} reason={profile.reason}"
-    return f"[profile] {profile.role}/{profile.name}: ctx={profile.env.get('SYMON_WRITER_CTX') or profile.env.get('SYMON_CHAT_CTX')} max_tokens={profile.options.get('max_tokens')} reason={profile.reason}"
+        return f"[profile] {profile.role}/{profile.name}: ctx={profile.env.get('SYMON_CODE_CTX')} batch={profile.env.get('SYMON_CODE_BATCH')} np={profile.env.get('SYMON_CODE_NP')} max_tokens={profile.options.get('max_tokens')} reason={profile.reason}"
+    return f"[profile] {profile.role}/{profile.name}: ctx={profile.env.get('SYMON_WRITER_CTX') or profile.env.get('SYMON_CHAT_CTX')} batch={profile.env.get('SYMON_WRITER_BATCH')} np={profile.env.get('SYMON_WRITER_NP')} max_tokens={profile.options.get('max_tokens')} reason={profile.reason}"
 
 
 def apply_image_profile(prompt: str, options: dict[str, Any] | None = None) -> dict[str, Any]:

@@ -341,3 +341,13 @@ Canonical startup:
 ```
 
 This sources `config/rtx5070ti_14_15gb.env` and targets 14000-15360 MiB total GPU memory on the RTX 5070 Ti 16GB card. Do not revert normal startup to the old ~8GB conservative llama-server profile.
+
+## Canonical RTX 5070 Ti startup
+
+Use only:
+
+```bash
+./scripts/symon
+```
+
+This starts the permanent 14-15GB VRAM profile from `config/rtx5070ti_14_15gb.env`. The old `start_exclusive_*` scripts are compatibility wrappers.

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "== SyMoNeuRaL GPU processes =="
+pgrep -af 'symon-llm-server|symon-image-server|llama-server|sd-server|SyMoNeuRaL_ML/main.py|python .*main.py' || true
+echo
+nvidia-smi

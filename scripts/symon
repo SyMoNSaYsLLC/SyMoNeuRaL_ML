@@ -1,14 +1,45 @@
 #!/usr/bin/env bash
 set -euo pipefail
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
+if [ -d ".venv" ]; then
+  # shellcheck disable=SC1091
+  source .venv/bin/activate
+fi
+
+# shellcheck disable=SC1091
 source "$ROOT/scripts/symon_env_5070ti_max.sh"
 
-echo "== SyMoNeuRaL RTX 5070 Ti permanent 14-15GB VRAM profile =="
-echo "writer ctx=${SYMON_WRITER_CTX} batch=${SYMON_WRITER_BATCH} ubatch=${SYMON_WRITER_UBATCH} parallel=${SYMON_WRITER_PARALLEL}"
-echo "code   ctx=${SYMON_CODE_CTX} batch=${SYMON_CODE_BATCH} ubatch=${SYMON_CODE_UBATCH} parallel=${SYMON_CODE_PARALLEL}"
-echo "image  ${SYMON_IMAGE_WIDTH}x${SYMON_IMAGE_HEIGHT} steps=${SYMON_IMAGE_STEPS}"
-echo "target total GPU memory: ${SYMON_MIN_VRAM_MIB}-${SYMON_MAX_VRAM_MIB} MiB"
+mkdir -p "$ROOT/bin"
 
-exec "$ROOT/scripts/start_exclusive_16gb.sh" "$@"
+# Use real project-owned executable copies so nvidia-smi shows symon names,
+# not the upstream llama-server path. Symlinks still show the upstream target.
+if [ -x "$ROOT/engines/llama.cpp/build/bin/llama-server" ]; then
+  cp -f "$ROOT/engines/llama.cpp/build/bin/llama-server" "$ROOT/bin/symon-llm-server"
+  chmod +x "$ROOT/bin/symon-llm-server"
+fi
+if [ -x "$ROOT/engines/llama.cpp/build/bin/llama-cli" ]; then
+  cp -f "$ROOT/engines/llama.cpp/build/bin/llama-cli" "$ROOT/bin/symon-llm-cli"
+  chmod +x "$ROOT/bin/symon-llm-cli"
+fi
+if [ -x "$ROOT/engines/stable-diffusion.cpp/build/bin/sd-server" ]; then
+  cp -f "$ROOT/engines/stable-diffusion.cpp/build/bin/sd-server" "$ROOT/bin/symon-image-server"
+  chmod +x "$ROOT/bin/symon-image-server"
+fi
+
+PYTHON_BIN="$ROOT/.venv/bin/python"
+[ -x "$PYTHON_BIN" ] || PYTHON_BIN="$ROOT/.venv/bin/python3"
+[ -x "$PYTHON_BIN" ] || PYTHON_BIN="$(command -v python3)"
+
+echo "== SyMoNeuRaL canonical RTX 5070 Ti 14-15GB VRAM profile =="
+echo "python: $PYTHON_BIN"
+echo "llm binary: $ROOT/bin/symon-llm-server"
+echo "writer gpu_layers=$SYMON_WRITER_GPU_LAYERS ctx=$SYMON_WRITER_CTX parallel=$SYMON_WRITER_NP batch=$SYMON_WRITER_BATCH ubatch=$SYMON_WRITER_UBATCH"
+echo "code   gpu_layers=$SYMON_CODE_GPU_LAYERS ctx=$SYMON_CODE_CTX parallel=$SYMON_CODE_NP batch=$SYMON_CODE_BATCH ubatch=$SYMON_CODE_UBATCH"
+echo "image  ${SYMON_IMAGE_WIDTH}x${SYMON_IMAGE_HEIGHT} steps=$SYMON_IMAGE_STEPS"
+echo "target total GPU memory: ${SYMON_MIN_VRAM_MIB}-${SYMON_MAX_VRAM_MIB} MiB"
+echo
+
+exec "$PYTHON_BIN" main.py "$@"
