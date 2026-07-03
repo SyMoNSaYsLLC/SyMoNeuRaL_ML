@@ -331,3 +331,13 @@ deploy/
 symon_tools/
 engines/
 ```
+
+## RTX 5070 Ti Permanent 14-15GB VRAM Profile
+
+Canonical startup:
+
+```bash
+./scripts/symon
+```
+
+This sources `config/rtx5070ti_14_15gb.env` and targets 14000-15360 MiB total GPU memory on the RTX 5070 Ti 16GB card. Do not revert normal startup to the old ~8GB conservative llama-server profile.

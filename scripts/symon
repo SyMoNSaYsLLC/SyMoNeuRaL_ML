@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+source "$ROOT/scripts/symon_env_5070ti_max.sh"
+
+echo "== SyMoNeuRaL RTX 5070 Ti permanent 14-15GB VRAM profile =="
+echo "writer ctx=${SYMON_WRITER_CTX} batch=${SYMON_WRITER_BATCH} ubatch=${SYMON_WRITER_UBATCH} parallel=${SYMON_WRITER_PARALLEL}"
+echo "code   ctx=${SYMON_CODE_CTX} batch=${SYMON_CODE_BATCH} ubatch=${SYMON_CODE_UBATCH} parallel=${SYMON_CODE_PARALLEL}"
+echo "image  ${SYMON_IMAGE_WIDTH}x${SYMON_IMAGE_HEIGHT} steps=${SYMON_IMAGE_STEPS}"
+echo "target total GPU memory: ${SYMON_MIN_VRAM_MIB}-${SYMON_MAX_VRAM_MIB} MiB"
+
+exec "$ROOT/scripts/start_exclusive_16gb.sh" "$@"
