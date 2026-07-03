@@ -59,3 +59,17 @@ app = create_app()
 if __name__ == "__main__":
     settings = get_settings()
     uvicorn.run(app, host=settings.host, port=settings.port)
+
+
+# Simple one-page chat frontend.
+ROOT_DIR = Path(__file__).resolve().parents[1]
+FRONTEND_DIR = ROOT_DIR / "frontend"
+STATIC_DIR = ROOT_DIR / "static"
+
+if STATIC_DIR.exists() and "static" not in [r.name for r in app.routes]:
+    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+@app.get("/")
+async def simple_chat_index():
+    return FileResponse(str(FRONTEND_DIR / "index.html"))
+
