@@ -49,3 +49,20 @@ symoneural_ml.egg-info/
 # Local build logs
 buildlog.txt
 *.log
+
+# Generated/runtime files
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.zip
+logs/*.log
+logs/*.json
+logs/*.csv
+logs/*metrics*
+data/symoneural_handoff_jobs/
+.symon_update/
+models/
+*.gguf
+*.safetensors
+bin/symon-*
+symoneural_ml.egg-info/
