@@ -10,8 +10,8 @@ echo "== SyMoNeuRaL full performance benchmark =="
 echo "python: $PYTHON_BIN"
 
 "$PYTHON_BIN" test.py
-"$PYTHON_BIN" bench.py
-"$PYTHON_BIN" scripts/perf_report.py
+"$PYTHON_BIN" bench.py --image-width "${SYMON_BENCH_IMAGE_WIDTH:-768}" --image-height "${SYMON_BENCH_IMAGE_HEIGHT:-768}" --image-steps "${SYMON_BENCH_IMAGE_STEPS:-32}"
+"$PYTHON_BIN" scripts/perf_report.py || true
 
 echo
 echo "Newest logs:"
