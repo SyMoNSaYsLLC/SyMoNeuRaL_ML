@@ -1,0 +1,33 @@
+SyMoNeuRaL C++ engine reset completed.
+
+Deleted engine folders listed in:
+  /tmp/symon_cpp_engine_dirs_to_delete.txt
+
+Fresh clones:
+  /home/google/SyMoNeuRaL_ML/engines/llama.cpp
+  /home/google/SyMoNeuRaL_ML/engines/stable-diffusion.cpp
+
+SSH repos:
+  git@github.com:ggml-org/llama.cpp.git
+  git@github.com:leejet/stable-diffusion.cpp.git
+
+Build dirs:
+  /home/google/SyMoNeuRaL_ML/engines/llama.cpp/build
+  /home/google/SyMoNeuRaL_ML/engines/stable-diffusion.cpp/build
+
+Installed project binaries:
+  bin/symon-llm-server
+  bin/symon-llm-cli
+  bin/symon-image-server
+
+Requirement snapshots:
+  requirements/llama.cpp.requirements.files.txt
+  requirements/llama.cpp.combined-requirements.txt
+  requirements/llama.cpp.freeze.txt
+  requirements/stable-diffusion.cpp.requirements.files.txt
+  requirements/stable-diffusion.cpp.combined-requirements.txt
+  requirements/stable-diffusion.cpp.freeze.txt
+
+Python envs, not for git commit:
+  requirements/.venvs/llama.cpp
+  requirements/.venvs/stable-diffusion.cpp

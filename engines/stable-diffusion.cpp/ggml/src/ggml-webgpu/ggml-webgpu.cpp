@@ -4056,7 +4056,6 @@ static bool ggml_webgpu_supported_qtype(ggml_type type) {
         case GGML_TYPE_IQ4_NL:
         case GGML_TYPE_IQ4_XS:
         case GGML_TYPE_MXFP4:
-        case GGML_TYPE_NVFP4:
             return true;
         default:
             return false;
@@ -4157,7 +4156,6 @@ static bool ggml_backend_webgpu_device_supports_op(ggml_backend_dev_t dev, const
                             case GGML_TYPE_IQ4_NL:
                             case GGML_TYPE_IQ4_XS:
                             case GGML_TYPE_MXFP4:
-                            case GGML_TYPE_NVFP4:
                                 supports_op = true;
                                 break;
                             default:
@@ -4198,7 +4196,6 @@ static bool ggml_backend_webgpu_device_supports_op(ggml_backend_dev_t dev, const
                         case GGML_TYPE_IQ4_NL:
                         case GGML_TYPE_IQ4_XS:
                         case GGML_TYPE_MXFP4:
-                        case GGML_TYPE_NVFP4:
                             supports_op = true;
                             break;
                         default:
