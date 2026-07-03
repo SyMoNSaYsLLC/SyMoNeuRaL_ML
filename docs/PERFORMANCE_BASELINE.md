@@ -1,62 +1,67 @@
-# RTX 5070 Ti Performance Baseline
+# RTX 5070 Ti 14GB VRAM Target Profile
 
-The 20:04 benchmark proved the system is stable after the first max profile:
+The previous turbo profile passed but only peaked around 9 GiB total GPU memory. The current target is to push benchmark peak GPU memory above 14,000 MiB while retaining exclusive handoff stability.
 
-```text
-Writer Manager: ~2.01s
-Code Handoff:   ~6.01s
-Image Handoff:  ~10.02s
-Failures:       0
-```
-
-The metrics CSV showed the GPU was active but still had headroom:
-
-```text
-Max VRAM used:  ~8908 MiB of 16303 MiB
-Max GPU util:   97%
-Max power draw: ~236 W of 300 W cap
-Max temp:       ~66 C
-```
-
-## Current turbo target
-
-The default 16GB launcher now runs the RTX 5070 Ti turbo profile:
+## Default launcher
 
 ```bash
 ./scripts/start_exclusive_16gb.sh
 ```
 
-It maps to:
+This maps to:
 
 ```bash
-./scripts/start_exclusive_5070ti_turbo.sh
+./scripts/start_exclusive_5070ti_vram14k.sh
 ```
 
-Turbo defaults:
+## 14GB target defaults
 
 ```text
 writer gpu layers: 999
-writer context:    8192
-writer batch:      1024
-writer ubatch:     256
+writer context:    16384
+writer batch:      2048
+writer ubatch:     512
 
 code gpu layers:   999
-code context:      16384
-code batch:        1024
-code ubatch:       256
+code context:      32768
+code batch:        2048
+code ubatch:       512
 
-image default:     768x768
-image steps:       32
+image default:     1024x1024
+image steps:       36
+target peak VRAM:  >= 14000 MiB
 ```
 
-Safe fallback:
+## Benchmark
 
 ```bash
-./scripts/start_exclusive_16gb_safe.sh
+./scripts/bench_vram14k.sh
 ```
 
-Benchmark:
+or:
 
 ```bash
 ./scripts/bench_performance.sh
+```
+
+## If still under 14GB
+
+Run an image-only stress pass:
+
+```bash
+SYMON_BENCH_IMAGE_WIDTH=1152 SYMON_BENCH_IMAGE_HEIGHT=1152 SYMON_BENCH_IMAGE_STEPS=40 python bench.py --skip-writer --skip-code
+```
+
+## Fallbacks
+
+Previous turbo launcher:
+
+```bash
+./scripts/start_exclusive_16gb_turbo.sh
+```
+
+Safe launcher, if present:
+
+```bash
+./scripts/start_exclusive_16gb_safe.sh
 ```
