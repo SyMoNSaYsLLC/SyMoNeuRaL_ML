@@ -71,3 +71,7 @@ symoneural_ml.egg-info/
 bin/symon-llm-server
 bin/symon-llm-cli
 bin/symon-image-server
+
+# Engine build outputs
+engines/*/build/
+engines/*/.git/
