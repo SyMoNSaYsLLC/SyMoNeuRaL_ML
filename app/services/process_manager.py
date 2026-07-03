@@ -59,7 +59,32 @@ class EngineProcessManager:
             "--parallel": {"--parallel", "-np"},
             "--batch-size": {"--batch-size", "-b"},
             "--ubatch-size": {"--ubatch-size", "-ub"},
+            "--cache-type-k": {"--cache-type-k", "-ctk"},
+            "--cache-type-v": {"--cache-type-v", "-ctv"},
         }.get(flag, {flag})
+
+    def _strip_value_flags(self, cmd: list[str], flags: set[str]) -> list[str]:
+        """Remove flags that require a following value, including --flag=value form.
+
+        This prevents stale config.yaml args like '--cache-type-v' without its value
+        from surviving and breaking llama-server startup.
+        """
+        aliases: set[str] = set()
+        for flag in flags:
+            aliases |= self._flag_aliases(flag)
+        out: list[str] = []
+        i = 0
+        while i < len(cmd):
+            item = cmd[i]
+            if item in aliases:
+                i += 2
+                continue
+            if any(item.startswith(alias + "=") for alias in aliases):
+                i += 1
+                continue
+            out.append(item)
+            i += 1
+        return out
 
     def _set_or_append(self, cmd: list[str], flag: str, value: str) -> list[str]:
         aliases = self._flag_aliases(flag)
@@ -157,19 +182,38 @@ class EngineProcessManager:
             cmd = self._set_or_append(cmd, "--batch-size", batch)
             cmd = self._set_or_append(cmd, "--ubatch-size", ubatch)
 
+            # Hard safety: remove stale/partial cache flags before applying cache settings.
+            # The old append-if-token-missing behavior could keep '--cache-type-v'
+            # while losing the following 'f16' value because 'f16' was already present
+            # from '--cache-type-k f16'. That is the exact startup failure this fixes.
+            cmd = self._strip_value_flags(cmd, {"--cache-type-k", "--cache-type-v"})
+
+            cache_k = self._first_env(
+                f"SYMON_{env_prefix}_CACHE_TYPE_K",
+                "SYMON_LLAMA_CACHE_TYPE_K",
+                "LLAMA_ARG_CACHE_TYPE_K",
+                default="f16",
+            )
+            cache_v = self._first_env(
+                f"SYMON_{env_prefix}_CACHE_TYPE_V",
+                "SYMON_LLAMA_CACHE_TYPE_V",
+                "LLAMA_ARG_CACHE_TYPE_V",
+                default="f16",
+            )
+            cmd = self._set_or_append(cmd, "--cache-type-k", cache_k)
+            cmd = self._set_or_append(cmd, "--cache-type-v", cache_v)
+
             extra = self._first_env(
                 f"SYMON_{env_prefix}_EXTRA_ARGS",
                 "SYMON_LLAMA_EXTRA_ARGS",
                 default="",
             )
             if extra:
-                for token in shlex.split(extra):
-                    if token not in cmd:
-                        cmd.append(token)
+                cmd.extend(shlex.split(extra))
 
             logger.info(
-                "RTX5070Ti profile for %s: gpu_layers=%s ctx=%s parallel=%s batch=%s ubatch=%s extra=%s",
-                name, gpu_layers, ctx, parallel, batch, ubatch, extra or "-",
+                "RTX5070Ti profile for %s: gpu_layers=%s ctx=%s parallel=%s batch=%s ubatch=%s cache_k=%s cache_v=%s extra=%s",
+                name, gpu_layers, ctx, parallel, batch, ubatch, cache_k, cache_v, extra or "-",
             )
         return cmd
 

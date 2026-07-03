@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
-echo "== SyMoNeuRaL GPU processes =="
-pgrep -af 'symon-llm-server|symon-image-server|llama-server|sd-server|SyMoNeuRaL_ML/main.py|python .*main.py' || true
+echo "== SyMoNeuRaL VRAM/process status =="
+pgrep -af 'symon-llm-server|llama-server|symon-image-server|sd-server|SyMoNeuRaL_ML/main.py|uvicorn' || true
 echo
 nvidia-smi
+echo
+echo "== canonical profile =="
+grep -E 'SYMON_(LLAMA|WRITER|CHAT|CODE)_(CTX|BATCH|UBATCH|PARALLEL|NP|CACHE_TYPE_K|CACHE_TYPE_V)|LLAMA_ARG_CACHE_TYPE' config/rtx5070ti_14_15gb.env || true
