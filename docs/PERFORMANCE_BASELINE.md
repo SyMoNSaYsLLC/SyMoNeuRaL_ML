@@ -1,6 +1,6 @@
-# RTX 5070 Ti 14GB VRAM Target Profile
+# RTX 5070 Ti 14GB+ VRAM Target Profile
 
-The previous turbo profile passed but only peaked around 9 GiB total GPU memory. The current target is to push benchmark peak GPU memory above 14,000 MiB while retaining exclusive handoff stability.
+The 1024x1024 / 36-step pass completed with zero failures but peaked below the 14GB target. The next default profile is 1152x1152 / 40 steps.
 
 ## Default launcher
 
@@ -14,54 +14,46 @@ This maps to:
 ./scripts/start_exclusive_5070ti_vram14k.sh
 ```
 
-## 14GB target defaults
+## 14GB+ target defaults
 
 ```text
 writer gpu layers: 999
 writer context:    16384
-writer batch:      2048
-writer ubatch:     512
+writer batch:      2048 target
+writer ubatch:     512 target
 
 code gpu layers:   999
 code context:      32768
-code batch:        2048
-code ubatch:       512
+code batch:        2048 target
+code ubatch:       512 target
 
-image default:     1024x1024
-image steps:       36
+image default:     1152x1152
+image steps:       40
 target peak VRAM:  >= 14000 MiB
 ```
 
-## Benchmark
+Note: if backend logs still show `-b 512 -ub 128`, that only means the current process manager has hardcoded batch defaults. Context and image size are the larger VRAM drivers for the current benchmark.
+
+## Full benchmark
 
 ```bash
 ./scripts/bench_vram14k.sh
 ```
 
-or:
+## Image-only stress benchmark
 
 ```bash
-./scripts/bench_performance.sh
+./scripts/bench_image_vram.sh
 ```
 
-## If still under 14GB
-
-Run an image-only stress pass:
+If 1152x1152 is still below target:
 
 ```bash
-SYMON_BENCH_IMAGE_WIDTH=1152 SYMON_BENCH_IMAGE_HEIGHT=1152 SYMON_BENCH_IMAGE_STEPS=40 python bench.py --skip-writer --skip-code
+SYMON_BENCH_IMAGE_WIDTH=1216 SYMON_BENCH_IMAGE_HEIGHT=1216 SYMON_BENCH_IMAGE_STEPS=40 ./scripts/bench_image_vram.sh
 ```
 
-## Fallbacks
-
-Previous turbo launcher:
+If OOM occurs:
 
 ```bash
-./scripts/start_exclusive_16gb_turbo.sh
-```
-
-Safe launcher, if present:
-
-```bash
-./scripts/start_exclusive_16gb_safe.sh
+SYMON_BENCH_IMAGE_WIDTH=1024 SYMON_BENCH_IMAGE_HEIGHT=1024 SYMON_BENCH_IMAGE_STEPS=36 ./scripts/bench_image_vram.sh
 ```

@@ -14,10 +14,8 @@ PYTHON_BIN="$PWD/.venv/bin/python"
 export SYMON_EXCLUSIVE_VRAM="${SYMON_EXCLUSIVE_VRAM:-true}"
 export SYMON_RESIDENT_ENGINE="${SYMON_RESIDENT_ENGINE:-writer}"
 
-# RTX 5070 Ti 16GB VRAM saturation target.
-# Goal: benchmark peaks around 14,000 MiB total GPU memory while keeping OOM margin.
-# If this OOMs, use scripts/start_exclusive_16gb_safe.sh.
-
+# 14GB+ VRAM target profile for RTX 5070 Ti 16GB.
+# 1024x1024 passed but only reached ~12.5GB. 1152x1152 is the next target.
 export SYMON_CHAT_GPU_LAYERS="${SYMON_CHAT_GPU_LAYERS:-999}"
 export SYMON_CHAT_CTX="${SYMON_CHAT_CTX:-16384}"
 export SYMON_CHAT_BATCH="${SYMON_CHAT_BATCH:-2048}"
@@ -36,18 +34,15 @@ export SYMON_CODE_BATCH="${SYMON_CODE_BATCH:-2048}"
 export SYMON_CODE_UBATCH="${SYMON_CODE_UBATCH:-512}"
 export SYMON_CODE_PARALLEL="${SYMON_CODE_PARALLEL:-1}"
 
-# 1024x1024 is the default high-quality VRAM target. If it still underfills VRAM,
-# test 1152x1152 with:
-#   SYMON_BENCH_IMAGE_WIDTH=1152 SYMON_BENCH_IMAGE_HEIGHT=1152 ./scripts/bench_performance.sh
-export SYMON_IMAGE_WIDTH="${SYMON_IMAGE_WIDTH:-1024}"
-export SYMON_IMAGE_HEIGHT="${SYMON_IMAGE_HEIGHT:-1024}"
-export SYMON_IMAGE_STEPS="${SYMON_IMAGE_STEPS:-36}"
+export SYMON_IMAGE_WIDTH="${SYMON_IMAGE_WIDTH:-1152}"
+export SYMON_IMAGE_HEIGHT="${SYMON_IMAGE_HEIGHT:-1152}"
+export SYMON_IMAGE_STEPS="${SYMON_IMAGE_STEPS:-40}"
 export SYMON_IMAGE_CFG_SCALE="${SYMON_IMAGE_CFG_SCALE:-7.5}"
 
-export SYMON_ENGINE_READY_TIMEOUT="${SYMON_ENGINE_READY_TIMEOUT:-420}"
+export SYMON_ENGINE_READY_TIMEOUT="${SYMON_ENGINE_READY_TIMEOUT:-480}"
 export SYMON_ENGINE_READY_POLL="${SYMON_ENGINE_READY_POLL:-0.5}"
 
-echo "== SyMoNeuRaL RTX 5070 Ti 14GB VRAM TARGET profile =="
+echo "== SyMoNeuRaL RTX 5070 Ti 14GB+ VRAM profile =="
 echo "python: $PYTHON_BIN"
 echo "writer gpu_layers=$SYMON_CHAT_GPU_LAYERS ctx=$SYMON_CHAT_CTX batch=$SYMON_CHAT_BATCH ubatch=$SYMON_CHAT_UBATCH"
 echo "code   gpu_layers=$SYMON_CODE_GPU_LAYERS ctx=$SYMON_CODE_CTX batch=$SYMON_CODE_BATCH ubatch=$SYMON_CODE_UBATCH"
