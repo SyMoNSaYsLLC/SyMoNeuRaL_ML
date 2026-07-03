@@ -30,4 +30,4 @@ doctor:
 	./scripts/doctor.sh
 
 clean:
-	sudo rm -rf engines/llama.cpp/build engines/stable-diffusion.cpp/build build
+	sudo rm -rf engines/symon-llm.cpp/build engines/symon-image.cpp/build build

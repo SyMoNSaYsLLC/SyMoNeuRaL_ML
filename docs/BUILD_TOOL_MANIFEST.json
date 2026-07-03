@@ -1,8 +1,8 @@
 {
   "version": "1.4.0-cuda-model-tools",
   "included_engine_sources": {
-    "llama.cpp": "engines/llama.cpp",
-    "stable-diffusion.cpp": "engines/stable-diffusion.cpp"
+    "llama.cpp": "engines/symon-llm.cpp",
+    "stable-diffusion.cpp": "engines/symon-image.cpp"
   },
   "path_commands": [
     "symon-server",

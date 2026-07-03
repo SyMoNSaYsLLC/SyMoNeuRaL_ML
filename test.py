@@ -37,9 +37,9 @@ REQUIRED_MODELS = [
     "models/sd/v1-5-pruned-emaonly.safetensors",
 ]
 REQUIRED_BINARIES = [
-    "engines/llama.cpp/build/bin/llama-server",
-    "engines/llama.cpp/build/bin/llama-cli",
-    "engines/stable-diffusion.cpp/build/bin/sd-server",
+    "engines/symon-llm.cpp/build/bin/llama-server",
+    "engines/symon-llm.cpp/build/bin/llama-cli",
+    "engines/symon-image.cpp/build/bin/sd-server",
 ]
 
 class Tee:

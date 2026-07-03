@@ -4,16 +4,16 @@ Deleted engine folders listed in:
   /tmp/symon_cpp_engine_dirs_to_delete.txt
 
 Fresh clones:
-  /home/google/SyMoNeuRaL_ML/engines/llama.cpp
-  /home/google/SyMoNeuRaL_ML/engines/stable-diffusion.cpp
+  /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp
+  /home/google/SyMoNeuRaL_ML/engines/symon-image.cpp
 
 SSH repos:
   git@github.com:ggml-org/llama.cpp.git
   git@github.com:leejet/stable-diffusion.cpp.git
 
 Build dirs:
-  /home/google/SyMoNeuRaL_ML/engines/llama.cpp/build
-  /home/google/SyMoNeuRaL_ML/engines/stable-diffusion.cpp/build
+  /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/build
+  /home/google/SyMoNeuRaL_ML/engines/symon-image.cpp/build
 
 Installed project binaries:
   bin/symon-llm-server

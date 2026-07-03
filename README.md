@@ -22,8 +22,8 @@ SyMoNeuRaL_ML is designed for local/private AI servers running NVIDIA GPUs. It w
 The project vendors:
 
 ```text
-engines/llama.cpp
-engines/stable-diffusion.cpp
+engines/symon-llm.cpp
+engines/symon-image.cpp
 ```
 
 and exposes them through:
@@ -157,7 +157,7 @@ Clock skew detected. Your build may be incomplete.
 normalize the vendored engine timestamps before rebuilding:
 
 ```bash
-find engines/llama.cpp engines/stable-diffusion.cpp -exec touch {} +
+find engines/symon-llm.cpp engines/symon-image.cpp -exec touch {} +
 
 ./scripts/install.sh
 ./scripts/doctor.sh

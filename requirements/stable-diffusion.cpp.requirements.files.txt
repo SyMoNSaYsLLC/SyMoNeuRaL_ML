@@ -1,1 +1,1 @@
-/home/google/SyMoNeuRaL_ML/engines/stable-diffusion.cpp/ggml/requirements.txt
+/home/google/SyMoNeuRaL_ML/engines/symon-image.cpp/ggml/requirements.txt

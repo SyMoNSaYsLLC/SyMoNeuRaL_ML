@@ -10,8 +10,8 @@ JOBS="${JOBS:-$(nproc)}"
 LLAMA_REPO="git@github.com:ggml-org/llama.cpp.git"
 SD_REPO="git@github.com:leejet/stable-diffusion.cpp.git"
 
-LLAMA_DIR="$ROOT/engines/llama.cpp"
-SD_DIR="$ROOT/engines/stable-diffusion.cpp"
+LLAMA_DIR="$ROOT/engines/symon-llm.cpp"
+SD_DIR="$ROOT/engines/symon-image.cpp"
 
 echo "== Stop all running sessions/processes =="
 tmux kill-server 2>/dev/null || true

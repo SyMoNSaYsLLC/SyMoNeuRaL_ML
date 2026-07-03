@@ -36,26 +36,26 @@ def discover_binaries(root: Path | str = ".") -> dict[str, Any]:
     root = Path(root)
     candidates = {
         "llama_server": [
-            root / "engines/llama.cpp/build/bin/llama-server",
-            root / "engines/llama.cpp/build/bin/server",
-            root / "engines/llama.cpp/build/bin/llama-cli",
+            root / "bin/symon-llm-server",
+            root / "engines/symon-llm.cpp/build/bin/server",
+            root / "engines/symon-llm.cpp/build/bin/llama-cli",
         ],
         "llama_cli": [
-            root / "engines/llama.cpp/build/bin/llama-cli",
-            root / "engines/llama.cpp/build/bin/main",
+            root / "engines/symon-llm.cpp/build/bin/llama-cli",
+            root / "engines/symon-llm.cpp/build/bin/main",
         ],
         "sd_server": [
-            root / "engines/stable-diffusion.cpp/build/bin/sd-server",
-            root / "engines/stable-diffusion.cpp/build/examples/server/sd-server",
-            root / "engines/stable-diffusion.cpp/build/bin/server",
+            root / "bin/symon-image-server",
+            root / "engines/symon-image.cpp/build/examples/server/sd-server",
+            root / "engines/symon-image.cpp/build/bin/server",
         ],
         "sd_cli": [
-            root / "engines/stable-diffusion.cpp/build/bin/sd",
-            root / "engines/stable-diffusion.cpp/build/bin/sd-cli",
+            root / "engines/symon-image.cpp/build/bin/sd",
+            root / "engines/symon-image.cpp/build/bin/sd-cli",
         ],
         "hf_to_gguf": [
-            root / "engines/llama.cpp/convert_hf_to_gguf.py",
-            root / "engines/llama.cpp/convert_hf_to_gguf_update.py",
+            root / "engines/symon-llm.cpp/convert_hf_to_gguf.py",
+            root / "engines/symon-llm.cpp/convert_hf_to_gguf_update.py",
         ],
     }
     out: dict[str, Any] = {}

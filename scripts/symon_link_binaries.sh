@@ -18,24 +18,24 @@ link_first() {
 }
 
 link_first symon-llama-server \
-  engines/llama.cpp/build/bin/llama-server \
-  engines/llama.cpp/build/bin/server
+  bin/symon-llm-server \
+  engines/symon-llm.cpp/build/bin/server
 
 link_first symon-llama-cli \
-  engines/llama.cpp/build/bin/llama-cli \
-  engines/llama.cpp/build/bin/main
+  engines/symon-llm.cpp/build/bin/llama-cli \
+  engines/symon-llm.cpp/build/bin/main
 
 link_first symon-sd-server \
-  engines/stable-diffusion.cpp/build/bin/sd-server \
-  engines/stable-diffusion.cpp/build/examples/server/sd-server \
-  engines/stable-diffusion.cpp/build/bin/server
+  bin/symon-image-server \
+  engines/symon-image.cpp/build/examples/server/sd-server \
+  engines/symon-image.cpp/build/bin/server
 
-if [ -f engines/llama.cpp/convert_hf_to_gguf.py ]; then
+if [ -f engines/symon-llm.cpp/convert_hf_to_gguf.py ]; then
   cat > bin/symon-hf_to_gguf <<'SH'
 #!/usr/bin/env bash
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-exec python3 "$ROOT/engines/llama.cpp/convert_hf_to_gguf.py" "$@"
+exec python3 "$ROOT/engines/symon-llm.cpp/convert_hf_to_gguf.py" "$@"
 SH
   chmod +x bin/symon-hf_to_gguf
 fi

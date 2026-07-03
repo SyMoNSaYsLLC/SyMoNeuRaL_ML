@@ -1,4 +1,4 @@
-# ===== /home/google/SyMoNeuRaL_ML/engines/stable-diffusion.cpp/ggml/requirements.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-image.cpp/ggml/requirements.txt =====
 accelerate==0.19.0
 numpy~=1.26.4; python_version < "3.13"
 numpy~=2.1.0; python_version >= "3.13"

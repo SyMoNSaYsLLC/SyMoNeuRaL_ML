@@ -48,10 +48,10 @@ from pathlib import Path
 
 # Patch repo references.
 repo_pairs = [
-    ("engines/llama.cpp", "engines/symon-llm.cpp"),
-    ("engines/stable-diffusion.cpp", "engines/symon-image.cpp"),
-    ("llama.cpp/build", "symon-llm.cpp/build"),
-    ("stable-diffusion.cpp/build", "symon-image.cpp/build"),
+    ("engines/symon-llm.cpp", "engines/symon-llm.cpp"),
+    ("engines/symon-image.cpp", "engines/symon-image.cpp"),
+    ("symon-llm.cpp/build", "symon-llm.cpp/build"),
+    ("symon-image.cpp/build", "symon-image.cpp/build"),
 ]
 skip = {".git", ".venv", "__pycache__", "models", "logs", "data", ".symon_update"}
 exts = {".py",".sh",".md",".txt",".yaml",".yml",".toml",".json",".cmake",".ini",".conf",".service",".cpp",".hpp",".h",".c",".cc",".cxx",".html",".css",".js"}
@@ -166,14 +166,14 @@ for p in [Path("config.yaml"), *Path("scripts").glob("*.sh"), *Path("app").rglob
     except UnicodeDecodeError: continue
     old = s
     repls = [
-        ("./engines/symon-llm.cpp/build/bin/llama-server", "./bin/symon-llm-server"),
-        ("engines/symon-llm.cpp/build/bin/llama-server", "bin/symon-llm-server"),
-        ("./engines/symon-llm.cpp/build/bin/symon-llm-server", "./bin/symon-llm-server"),
-        ("engines/symon-llm.cpp/build/bin/symon-llm-server", "bin/symon-llm-server"),
-        ("./engines/symon-image.cpp/build/bin/sd-server", "./bin/symon-image-server"),
-        ("engines/symon-image.cpp/build/bin/sd-server", "bin/symon-image-server"),
-        ("./engines/symon-image.cpp/build/bin/symon-image-server", "./bin/symon-image-server"),
-        ("engines/symon-image.cpp/build/bin/symon-image-server", "bin/symon-image-server"),
+        ("./bin/symon-llm-server", "./bin/symon-llm-server"),
+        ("bin/symon-llm-server", "bin/symon-llm-server"),
+        ("./bin/symon-llm-server", "./bin/symon-llm-server"),
+        ("bin/symon-llm-server", "bin/symon-llm-server"),
+        ("./bin/symon-image-server", "./bin/symon-image-server"),
+        ("bin/symon-image-server", "bin/symon-image-server"),
+        ("./bin/symon-image-server", "./bin/symon-image-server"),
+        ("bin/symon-image-server", "bin/symon-image-server"),
     ]
     for a,b in repls: s = s.replace(a,b)
     if s != old:
@@ -211,7 +211,7 @@ strings bin/symon-image-server | grep -E 'symon-image|sd-server|stable-diffusion
 echo "== Commit and push =="
 git status --short
 git add engines/symon-llm.cpp engines/symon-image.cpp bin/symon-llm-server bin/symon-image-server bin/symon-llm-cli app scripts config config.yaml docs README.md pyproject.toml CMakeLists.txt Makefile 2>/dev/null || true
-git add -u engines/llama.cpp engines/stable-diffusion.cpp 2>/dev/null || true
+git add -u engines/symon-llm.cpp engines/symon-image.cpp 2>/dev/null || true
 if git diff --cached --quiet; then
   echo "No staged changes."
 else

@@ -30,16 +30,16 @@ nvcc --version || true
 
 echo
 echo "== Engine source dirs =="
-[ -d engines/llama.cpp ] && echo "OK: engines/llama.cpp" || echo "MISSING: engines/llama.cpp"
-[ -d engines/stable-diffusion.cpp ] && echo "OK: engines/stable-diffusion.cpp" || echo "MISSING: engines/stable-diffusion.cpp"
+[ -d engines/symon-llm.cpp ] && echo "OK: engines/symon-llm.cpp" || echo "MISSING: engines/symon-llm.cpp"
+[ -d engines/symon-image.cpp ] && echo "OK: engines/symon-image.cpp" || echo "MISSING: engines/symon-image.cpp"
 
 echo
 echo "== Expected engine binaries =="
 for f in \
-  engines/llama.cpp/build/bin/llama-server \
-  engines/llama.cpp/build/bin/llama-cli \
-  engines/stable-diffusion.cpp/build/bin/sd-server \
-  engines/stable-diffusion.cpp/build/examples/server/sd-server
+  bin/symon-llm-server \
+  engines/symon-llm.cpp/build/bin/llama-cli \
+  bin/symon-image-server \
+  engines/symon-image.cpp/build/examples/server/sd-server
 do
   [ -e "$f" ] && echo "OK: $f" || echo "not built: $f"
 done

@@ -9,31 +9,31 @@ option(SYMON_BUILD_LLAMA "Build vendored llama.cpp" ON)
 option(SYMON_BUILD_SD "Build vendored stable-diffusion.cpp" ON)
 option(SYMON_CUDA "Enable CUDA backends" ON)
 
-if(SYMON_BUILD_LLAMA AND EXISTS "${CMAKE_SOURCE_DIR}/engines/llama.cpp/CMakeLists.txt")
+if(SYMON_BUILD_LLAMA AND EXISTS "${CMAKE_SOURCE_DIR}/engines/symon-llm.cpp/CMakeLists.txt")
   add_custom_target(symon_llama_cuda
-    COMMAND ${CMAKE_COMMAND} -S ${CMAKE_SOURCE_DIR}/engines/llama.cpp -B ${CMAKE_SOURCE_DIR}/engines/llama.cpp/build
+    COMMAND ${CMAKE_COMMAND} -S ${CMAKE_SOURCE_DIR}/engines/symon-llm.cpp -B ${CMAKE_SOURCE_DIR}/engines/symon-llm.cpp/build
       -DCMAKE_BUILD_TYPE=$<IF:$<CONFIG:Debug>,Debug,Release>
       -DGGML_CUDA=$<IF:$<BOOL:${SYMON_CUDA}>,ON,OFF>
       -DLLAMA_BUILD_SERVER=ON
       -DLLAMA_BUILD_TOOLS=ON
       -DLLAMA_BUILD_EXAMPLES=ON
       -DLLAMA_BUILD_TESTS=OFF
-    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_SOURCE_DIR}/engines/llama.cpp/build --config $<IF:$<CONFIG:Debug>,Debug,Release> -j
+    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_SOURCE_DIR}/engines/symon-llm.cpp/build --config $<IF:$<CONFIG:Debug>,Debug,Release> -j
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Building llama.cpp CUDA engine"
   )
 endif()
 
-if(SYMON_BUILD_SD AND EXISTS "${CMAKE_SOURCE_DIR}/engines/stable-diffusion.cpp/CMakeLists.txt")
+if(SYMON_BUILD_SD AND EXISTS "${CMAKE_SOURCE_DIR}/engines/symon-image.cpp/CMakeLists.txt")
   add_custom_target(symon_stable_diffusion_cuda
-    COMMAND ${CMAKE_COMMAND} -S ${CMAKE_SOURCE_DIR}/engines/stable-diffusion.cpp -B ${CMAKE_SOURCE_DIR}/engines/stable-diffusion.cpp/build
+    COMMAND ${CMAKE_COMMAND} -S ${CMAKE_SOURCE_DIR}/engines/symon-image.cpp -B ${CMAKE_SOURCE_DIR}/engines/symon-image.cpp/build
       -DCMAKE_BUILD_TYPE=$<IF:$<CONFIG:Debug>,Debug,Release>
       -DSD_CUDA=$<IF:$<BOOL:${SYMON_CUDA}>,ON,OFF>
       -DGGML_CUDA=$<IF:$<BOOL:${SYMON_CUDA}>,ON,OFF>
       -DSD_BUILD_SERVER=ON
       -DSD_BUILD_EXAMPLES=ON
       -DSD_BUILD_TESTS=OFF
-    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_SOURCE_DIR}/engines/stable-diffusion.cpp/build --config $<IF:$<CONFIG:Debug>,Debug,Release> -j
+    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_SOURCE_DIR}/engines/symon-image.cpp/build --config $<IF:$<CONFIG:Debug>,Debug,Release> -j
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Building stable-diffusion.cpp CUDA engine"
   )

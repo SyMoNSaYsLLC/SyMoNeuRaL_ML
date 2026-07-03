@@ -1,4 +1,4 @@
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/examples/model-conversion/requirements.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/examples/model-conversion/requirements.txt =====
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch
 torchvision
@@ -7,7 +7,7 @@ huggingface-hub
 accelerate
 sentence-transformers
 
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/requirements/requirements-all.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/requirements/requirements-all.txt =====
 -r ../tools/mtmd/requirements.txt
 -r ../tools/server/bench/requirements.txt
 -r ../tools/server/tests/requirements.txt
@@ -27,12 +27,12 @@ sentence-transformers
 
 -r ../examples/model-conversion/requirements.txt
 
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/requirements/requirements-compare-llama-bench.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/requirements/requirements-compare-llama-bench.txt =====
 tabulate~=0.9.0
 GitPython~=3.1.43
 matplotlib~=3.10.0
 
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/requirements/requirements-convert_hf_to_gguf.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/requirements/requirements-convert_hf_to_gguf.txt =====
 -r ./requirements-convert_legacy_llama.txt
 --extra-index-url https://download.pytorch.org/whl/cpu
 
@@ -43,10 +43,10 @@ torch==2.11.0; platform_machine != "s390x"
 --extra-index-url https://download.pytorch.org/whl/nightly
 torch>=0.0.0.dev0; platform_machine == "s390x"
 
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/requirements/requirements-convert_hf_to_gguf_update.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/requirements/requirements-convert_hf_to_gguf_update.txt =====
 -r ./requirements-convert_legacy_llama.txt
 
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/requirements/requirements-convert_legacy_llama.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/requirements/requirements-convert_legacy_llama.txt =====
 numpy~=1.26.4
 sentencepiece>=0.1.98,<0.3.0
 
@@ -55,36 +55,36 @@ transformers==4.57.6
 gguf>=0.1.0
 protobuf>=4.21.0,<5.0.0
 
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/requirements/requirements-convert_llama_ggml_to_gguf.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/requirements/requirements-convert_llama_ggml_to_gguf.txt =====
 -r ./requirements-convert_legacy_llama.txt
 
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/requirements/requirements-convert_lora_to_gguf.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/requirements/requirements-convert_lora_to_gguf.txt =====
 -r ./requirements-convert_hf_to_gguf.txt
 --extra-index-url https://download.pytorch.org/whl/cpu
 # torch s390x packages can only be found from nightly builds
 --extra-index-url https://download.pytorch.org/whl/nightly
 
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/requirements/requirements-gguf_editor_gui.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/requirements/requirements-gguf_editor_gui.txt =====
 numpy~=1.26.4
 PySide6~=6.9.0
 gguf>=0.17.0
 
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/requirements/requirements-pydantic.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/requirements/requirements-pydantic.txt =====
 docstring_parser~=0.15
 pydantic~=2.11.7
 requests~=2.32.3
 
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/requirements/requirements-server-bench.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/requirements/requirements-server-bench.txt =====
 datasets~=4.8.0
 matplotlib~=3.10.0
 numpy~=1.26.4
 requests~=2.32.3
 tqdm~=4.67.1
 
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/requirements/requirements-test-tokenizer-random.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/requirements/requirements-test-tokenizer-random.txt =====
 cffi~=1.16.0
 
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/requirements/requirements-tool_bench.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/requirements/requirements-tool_bench.txt =====
 aiohttp~=3.9.3
 pytest~=8.3.3
 matplotlib~=3.10.0
@@ -97,7 +97,7 @@ wget~=3.2
 typer~=0.24.1
 seaborn~=0.13.2
 
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/requirements.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/requirements.txt =====
 # These requirements include all dependencies for all top-level python scripts
 # for llama.cpp. Avoid adding packages here directly.
 #
@@ -112,11 +112,11 @@ seaborn~=0.13.2
 -r ./requirements/requirements-convert_lora_to_gguf.txt
 -r ./requirements/requirements-tool_bench.txt
 
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/scripts/jinja/requirements.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/scripts/jinja/requirements.txt =====
 PySide6
 jinja2
 
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/scripts/snapdragon/qdc/requirements.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/scripts/snapdragon/qdc/requirements.txt =====
 Appium-Python-Client==5.2.4
 attrs==25.4.0
 certifi==2025.10.5
@@ -140,7 +140,7 @@ urllib3==2.5.0
 websocket-client==1.9.0
 wsproto==1.2.0
 
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/tools/mtmd/requirements.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/tools/mtmd/requirements.txt =====
 -r ../../requirements/requirements-convert_legacy_llama.txt
 --extra-index-url https://download.pytorch.org/whl/cpu
 pillow~=11.3.0
@@ -154,21 +154,21 @@ torchvision==0.26.0; platform_machine != "s390x" # check_requirements: ignore "=
 torch>=0.0.0.dev0; platform_machine == "s390x" # check_requirements: ignore "=="
 torchvision>=0.0.0.dev0; platform_machine == "s390x" # check_requirements: ignore "=="
 
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/tools/mtmd/tests/tests-requirements.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/tools/mtmd/tests/tests-requirements.txt =====
 jiwer
 sacrebleu
 rapidfuzz
 
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/tools/server/bench/requirements.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/tools/server/bench/requirements.txt =====
 matplotlib
 requests
 
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/tools/server/bench/speed-bench/requirements.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/tools/server/bench/speed-bench/requirements.txt =====
 datasets
 requests
 tqdm
 
-# ===== /home/google/SyMoNeuRaL_ML/engines/llama.cpp/tools/server/tests/requirements.txt =====
+# ===== /home/google/SyMoNeuRaL_ML/engines/symon-llm.cpp/tools/server/tests/requirements.txt =====
 aiohttp~=3.9.3
 pytest~=8.3.3
 numpy~=1.26.4
