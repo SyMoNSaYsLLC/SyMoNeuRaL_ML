@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+export SYMON_TRUE_SINGLE_SERVER="1"
+export SYMON_DISABLE_ENGINE_HTTP="1"
+export SYMON_HOST="127.0.0.1"
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

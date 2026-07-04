@@ -16,7 +16,7 @@ class Settings(BaseModel):
 
     @property
     def host(self) -> str:
-        return os.getenv("SYMON_HOST", self.raw.get("app", {}).get("host", "0.0.0.0"))
+        return os.getenv("SYMON_HOST", self.raw.get("app", {}).get("host", "127.0.0.1"))
 
     @property
     def port(self) -> int:
