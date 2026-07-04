@@ -1,0 +1,12 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+    configure)
+        chmod 755 "/usr/bin/symoneural-view"
+        chmod 755 "/usr/lib/symoneural-view/symoneural-view.py"
+        echo "SyMoNeuRaL-View v2.2.0 integrated successfully."
+    ;;
+esac
+
+exit 0

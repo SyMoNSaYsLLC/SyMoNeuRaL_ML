@@ -1,0 +1,15 @@
+symoneural-view (1.0.1) unstable; urgency=medium
+
+  * Rebranded package and internal architecture to SyMoNeuRaL-View.
+  * Consolidated 33 legacy submodules into 4 deterministic core engines (core, parsers, interface, engine).
+  * Hardened hardware-accelerated video engine specifically for RTX 5070 Ti (NVDEC/XCB).
+  * Implemented strict subprocess lifecycle management via psutil to prevent orphaned ffmpeg streams.
+  * Mapped asset hooks to native /usr/share directories and implemented robust postinst cache updating.
+
+ -- Garrett Parker Mcdonald <gmcdonald@symoneural.com>, Ben Hesley <bhesley@symoneural.com>  Sat, 28 Feb 2026 15:45:00 -0500
+
+symoneural-tv (1.0.0) unstable; urgency=low
+
+  * Initial proprietary release for SyMoNeuRaL OS.
+
+ -- Garrett Parker Mcdonald <gmcdonald@symoneural.com>  Tue, 24 Feb 2026 10:45:00 -0500

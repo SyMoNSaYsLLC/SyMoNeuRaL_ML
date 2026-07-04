@@ -1,0 +1,11 @@
+Package: symoneural-view
+Version: 2.2.0
+Architecture: all
+Maintainer: Garrett Parker Mcdonald <gmcdonald@symoneural.com>
+Depends: python3 (>= 3.10), python3-pyqt6, python3-requests, ffmpeg
+Section: video
+Priority: optional
+Description: SyMoNeuRaL-View High-Performance Workstation.
+ Architecture-aware media workstation with eBPF/XDP acceleration.
+ Supports x86_64 (NVDEC/VAAPI) and ARM64 (V4L2/DRM-PRIME).
+Homepage: https://symoneural.com

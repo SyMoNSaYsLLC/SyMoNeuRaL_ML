@@ -79,3 +79,10 @@ engines/*/.git/
 .vscode/mcp.json
 # Project-local built MCP binary
 bin/matlab-mcp-server
+
+# IPTV local/runtime data; may contain provider URLs and huge indexes
+data/iptv/*
+!data/iptv/.gitkeep
+!data/iptv/index/
+data/iptv/index/*
+!data/iptv/index/.gitkeep

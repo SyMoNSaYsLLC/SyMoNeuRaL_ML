@@ -7,3 +7,8 @@ matlab/vendor/mathworks-image-classifier-app/** linguist-vendored
 matlab/vendor/mathworks-matlab-mcp-server/** linguist-vendored
 matlab/vendor/mathworks-ai-coding-prompts/** linguist-vendored
 bin/matlab-mcp-server linguist-generated
+
+# IPTV compatibility app is kept as an external compatibility layer.
+clients/iptv/symoneural-view/** linguist-vendored
+# Runtime IPTV playlist/index data should not affect GitHub language stats.
+data/iptv/** linguist-generated

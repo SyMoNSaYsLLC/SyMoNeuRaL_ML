@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+export LC_NUMERIC=C
+
+if [ -n "$WAYLAND_DISPLAY" ]; then
+    export QT_QPA_PLATFORM=wayland
+else
+    export QT_QPA_PLATFORM=xcb
+fi
+
+exec python3 /usr/lib/symoneural-view/symoneural-view.py "$@"
+

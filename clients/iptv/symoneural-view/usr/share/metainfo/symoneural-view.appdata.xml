@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+    <id>com.symoneural.view</id>
+    <metadata_license>CC0-1.0</metadata_license>
+    <project_license>Proprietary</project_license>
+    <name>SyMoNeuRaL View</name>
+    <summary>High-Performance Media Workstation</summary>
+    <description>
+        <p>
+            SyMoNeuRaL-View is a proprietary, hardware-accelerated media and IPTV workstation tailored for high-end environments. Engineered natively for Debian Trixie, it provides low-latency stream rendering and seamless background recording.
+        </p>
+        <p>Key Features:</p>
+        <ul>
+            <li>Native XCB platform integration with forced auto-hardware decoding for NVIDIA RTX architectures.</li>
+            <li>Multi-threaded, deterministic backend for parallel EPG parsing and stable ffmpeg recording management.</li>
+            <li>Advanced stream ingestion supporting Xtream API, M3U, and XSPF topologies.</li>
+        </ul>
+    </description>
+    <launchable type="desktop-id">symoneural-view.desktop</launchable>
+    <developer_name>SyMoNeuRaL</developer_name>
+    <update_contact>gmcdonald@symoneural.com</update_contact>
+    <provides>
+        <binary>symoneural-view</binary>
+    </provides>
+</component>

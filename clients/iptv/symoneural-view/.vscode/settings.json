@@ -1,0 +1,35 @@
+{
+  "python.defaultInterpreterPath": "/usr/bin/python3",
+  "python.analysis.typeCheckingMode": "standard",
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/usr/lib/symoneural-view",
+    "/usr/lib/python3/dist-packages"
+  ],
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingModuleSource": "none"
+  },
+  "files.associations": {
+    "*.bb": "shellscript",
+    "*.bbappend": "shellscript",
+    "*.conf": "shellscript"
+  },
+  "search.exclude": {
+    "**/build": true,
+    "**/tmp": true,
+    "**/sstate-cache": true
+  },
+  "files.exclude": {
+    "**/build": true,
+    "**/tmp": true,
+    "**/sstate-cache": true
+  },
+  "editor.tabSize": 4,
+  "editor.trimAutoWhitespace": true,
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "extensions.ignoreRecommendations": false,
+  "extensions.recommendations": [
+    "yocto-support",
+    "timonwong.shellcheck"
+  ]
+}

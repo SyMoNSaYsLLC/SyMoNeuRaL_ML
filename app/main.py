@@ -12,6 +12,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.core.config import get_settings
 from app.routers.api_v1 import router as api_v1_router
+from app.routers.iptv import router as iptv_router
 from app.services.process_manager import EngineProcessManager
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -40,6 +41,7 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
     app.include_router(api_v1_router)
+    app.include_router(iptv_router)
 
     @app.get("/api/health")
     def legacy_health():

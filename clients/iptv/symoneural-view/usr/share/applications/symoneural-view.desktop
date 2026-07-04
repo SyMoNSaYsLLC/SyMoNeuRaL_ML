@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=SyMoNeuRaL View
+GenericName=Media Workstation
+Comment=Proprietary High-Performance Media Workstation
+Exec=symoneural-view
+Icon=symoneural-view
+Terminal=false
+Type=Application
+Categories=AudioVideo;Video;Player;Qt;
+Keywords=IPTV;Stream;SyMoNeuRaL;View;Media;
+StartupNotify=true
