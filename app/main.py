@@ -68,6 +68,13 @@ def create_app() -> FastAPI:
     def index():
         return FileResponse(frontend_dir / "index.html")
 
+    @app.get("/iptv")
+    @app.get("/iptv/browser")
+    @app.get("/iptv/epg")
+    @app.get("/tv")
+    def iptv_browser():
+        return FileResponse(frontend_dir / "iptv.html")
+
     return app
 
 
