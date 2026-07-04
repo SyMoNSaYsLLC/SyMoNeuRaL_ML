@@ -144,7 +144,7 @@ class EngineProcessManager:
         if disabled in {"1", "true", "yes", "on"}:
             return cmd
 
-        ui_path = os.getenv("SYMON_LLAMA_UI_PATH", "frontend/symon-llm-ui").strip()
+        ui_path = os.getenv("SYMON_LLAMA_UI_PATH", "").strip()
         if not ui_path:
             return cmd
         ui_dir = Path(ui_path)

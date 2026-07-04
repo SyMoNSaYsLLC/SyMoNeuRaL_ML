@@ -20,24 +20,24 @@ engines:
     enabled: true
     kind: llama_cpp
     route: writer
-    cmd: ["./bin/symon-llm-server", "-m", "./models/llm/gemma-4-12b-it-Q4_K_M.gguf", "--host", "0.0.0.0", "--port", "8080", "--gpu-layers", "999"]
-    endpoint: http://127.0.0.1:8080/v1/chat/completions
-    health: http://127.0.0.1:8080/health
+    cmd: ["./bin/symon-llm-server", "-m", "./models/llm/gemma-4-12b-it-Q4_K_M.gguf", "--host", "127.0.0.1", "--port", "18080", "--gpu-layers", "999"]
+    endpoint: http://127.0.0.1:18080/v1/chat/completions
+    health: http://127.0.0.1:18080/health
     defaults: {temperature: 0.65, top_p: 0.95, max_tokens: 700}
   code:
     enabled: true
     kind: llama_cpp
     route: code
-    cmd: ["./bin/symon-llm-server", "-m", "./models/llm/qwen2.5-coder-1.5b-instruct-q8_0.gguf", "--host", "0.0.0.0", "--port", "8081", "--gpu-layers", "999"]
-    endpoint: http://127.0.0.1:8081/v1/chat/completions
-    health: http://127.0.0.1:8081/health
+    cmd: ["./bin/symon-llm-server", "-m", "./models/llm/qwen2.5-coder-1.5b-instruct-q8_0.gguf", "--host", "127.0.0.1", "--port", "18081", "--gpu-layers", "999"]
+    endpoint: http://127.0.0.1:18081/v1/chat/completions
+    health: http://127.0.0.1:18081/health
     defaults: {temperature: 0.2, top_p: 0.95, max_tokens: 1000}
   image:
     enabled: true
     kind: stable_diffusion_cpp
     route: image
-    cmd: ["./bin/symon-image-server", "-m", "./models/sd/v1-5-pruned-emaonly.safetensors", "--listen-ip", "0.0.0.0", "--listen-port", "8082"]
-    endpoint: http://127.0.0.1:8082/sdapi/v1/txt2img
+    cmd: ["./bin/symon-image-server", "-m", "./models/sd/v1-5-pruned-emaonly.safetensors", "--listen-ip", "127.0.0.1", "--listen-port", "18082"]
+    endpoint: http://127.0.0.1:18082/sdapi/v1/txt2img
     health: http://127.0.0.1:8082
     defaults: {width: 512, height: 512, steps: 34, cfg_scale: 7.5, sampler_name: Euler a}
 
