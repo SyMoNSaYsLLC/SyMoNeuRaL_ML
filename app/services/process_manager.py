@@ -35,7 +35,12 @@ class EngineProcessManager:
 
     def shared_library_dirs(self) -> list[str]:
         dirs: set[str] = set()
-        for base in [self.root / "engines" / "llama.cpp" / "build", self.root / "engines" / "stable-diffusion.cpp" / "build"]:
+        for base in [
+            self.root / "engines" / "symon-llm.cpp" / "build",
+            self.root / "engines" / "symon-image.cpp" / "build",
+            self.root / "engines" / "llama.cpp" / "build",
+            self.root / "engines" / "stable-diffusion.cpp" / "build",
+        ]:
             if base.exists():
                 for path in base.rglob("*.so"):
                     if path.is_file():
@@ -132,6 +137,28 @@ class EngineProcessManager:
                 return str(value)
         return default
 
+
+    def _ensure_llm_ui_path(self, cmd: list[str]) -> list[str]:
+        """Serve SyMoNeuRaL's branded engine UI instead of the default embedded llama UI."""
+        disabled = os.getenv("SYMON_LLAMA_UI_DISABLE", "0").strip().lower()
+        if disabled in {"1", "true", "yes", "on"}:
+            return cmd
+
+        ui_path = os.getenv("SYMON_LLAMA_UI_PATH", "frontend/symon-llm-ui").strip()
+        if not ui_path:
+            return cmd
+        ui_dir = Path(ui_path)
+        if not ui_dir.is_absolute():
+            ui_dir = self.root / ui_dir
+        if not (ui_dir / "index.html").exists():
+            logger.warning("SyMoNeuRaL LLM UI path missing index.html: %s", ui_dir)
+            return cmd
+
+        # Replace any existing static path so http://127.0.0.1:8080/ is branded.
+        cmd = self._strip_value_flags(cmd, {"--path"})
+        cmd = self._set_or_append(cmd, "--path", str(ui_dir))
+        return cmd
+
     def normalize_cmd(self, name: str, cmd: list[str]) -> list[str]:
         cmd = list(cmd)
         if self._is_llama_cmd(name, cmd):
@@ -202,6 +229,7 @@ class EngineProcessManager:
             )
             cmd = self._set_or_append(cmd, "--cache-type-k", cache_k)
             cmd = self._set_or_append(cmd, "--cache-type-v", cache_v)
+            cmd = self._ensure_llm_ui_path(cmd)
 
             extra = self._first_env(
                 f"SYMON_{env_prefix}_EXTRA_ARGS",

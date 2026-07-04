@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SyMoNeuRaL LLM Engine</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #070a12;
+      --panel: rgba(15, 23, 42, 0.84);
+      --panel2: rgba(30, 41, 59, 0.72);
+      --text: #e5eefb;
+      --muted: #9fb0c6;
+      --line: rgba(148, 163, 184, 0.18);
+      --accent: #7c3aed;
+      --accent2: #06b6d4;
+      --good: #22c55e;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(124, 58, 237, .26), transparent 32rem),
+        radial-gradient(circle at top right, rgba(6, 182, 212, .18), transparent 28rem),
+        linear-gradient(135deg, #020617, var(--bg));
+    }
+    .shell { width: min(1180px, calc(100vw - 32px)); margin: 0 auto; padding: 28px 0; }
+    .top { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 22px; }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .orb { width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); box-shadow: 0 0 42px rgba(124,58,237,.55); }
+    h1, h2, h3 { margin: 0; }
+    h1 { font-size: clamp(26px, 4vw, 48px); letter-spacing: -.04em; }
+    .tagline { margin: 4px 0 0; color: var(--muted); }
+    .links { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+    a, button { color: var(--text); }
+    .link, button {
+      border: 1px solid var(--line);
+      background: rgba(15, 23, 42, .68);
+      border-radius: 14px;
+      padding: 10px 14px;
+      text-decoration: none;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    button.primary { background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(6,182,212,.8)); border: 0; }
+    .grid { display: grid; grid-template-columns: 320px 1fr; gap: 18px; align-items: stretch; }
+    .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 24px; box-shadow: 0 20px 70px rgba(0,0,0,.28); overflow: hidden; }
+    .panel-pad { padding: 20px; }
+    .stat { display: grid; gap: 6px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .stat:last-child { border-bottom: 0; }
+    .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .12em; }
+    .value { font-size: 14px; word-break: break-word; }
+    .ok { color: var(--good); }
+    .warn { color: var(--warn); }
+    .bad { color: var(--bad); }
+    .chat { display: grid; grid-template-rows: 1fr auto; min-height: 72vh; }
+    #messages { padding: 20px; overflow: auto; display: flex; flex-direction: column; gap: 14px; }
+    .msg { border: 1px solid var(--line); border-radius: 18px; padding: 14px 15px; line-height: 1.48; white-space: pre-wrap; }
+    .user { background: rgba(124,58,237,.18); align-self: flex-end; max-width: 82%; }
+    .assistant { background: rgba(15,23,42,.72); align-self: flex-start; max-width: 88%; }
+    .system { background: rgba(6,182,212,.10); color: var(--muted); align-self: stretch; }
+    .composer { border-top: 1px solid var(--line); padding: 16px; display: grid; grid-template-columns: 1fr auto; gap: 12px; background: rgba(2, 6, 23, .26); }
+    textarea { width: 100%; min-height: 62px; resize: vertical; border: 1px solid var(--line); background: rgba(2,6,23,.64); color: var(--text); border-radius: 16px; padding: 14px; font: inherit; outline: none; }
+    code { background: rgba(148,163,184,.14); padding: 2px 6px; border-radius: 8px; }
+    .fine { margin-top: 12px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+    @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } .top { align-items: flex-start; flex-direction: column; } .links { justify-content: flex-start; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="top">
+      <div class="brand">
+        <div class="orb"></div>
+        <div>
+          <h1>SyMoNeuRaL LLM Engine</h1>
+          <p class="tagline">Local RTX 5070 Ti text engine endpoint on port 8080.</p>
+        </div>
+      </div>
+      <nav class="links">
+        <a class="link" href="http://127.0.0.1:8000/">SyMoNeuRaL Chat</a>
+        <a class="link" href="http://127.0.0.1:8000/iptv">IPTV</a>
+        <a class="link" href="/health">Engine Health</a>
+        <a class="link" href="/v1/models">Models</a>
+      </nav>
+    </header>
+
+    <main class="grid">
+      <aside class="panel panel-pad">
+        <h2>Engine status</h2>
+        <div class="stat">
+          <div class="label">Branding</div>
+          <div class="value ok">SyMoNeuRaL-owned UI active</div>
+        </div>
+        <div class="stat">
+          <div class="label">Backend</div>
+          <div class="value">OpenAI-compatible local engine</div>
+        </div>
+        <div class="stat">
+          <div class="label">Model</div>
+          <div class="value" id="modelName">checking…</div>
+        </div>
+        <div class="stat">
+          <div class="label">Endpoint</div>
+          <div class="value"><code>/v1/chat/completions</code></div>
+        </div>
+        <div class="stat">
+          <div class="label">Runtime note</div>
+          <div class="value">This page is served directly by <code>bin/symon-llm-server</code>. The main app still runs on port 8000.</div>
+        </div>
+        <p class="fine">This replaces the default embedded llama UI on <code>http://127.0.0.1:8080/</code> by launching the engine with <code>--path frontend/symon-llm-ui</code>.</p>
+      </aside>
+
+      <section class="panel chat">
+        <div id="messages">
+          <div class="msg system">Ready. This is the engine-level UI. For normal routing, use the main SyMoNeuRaL chat on port 8000.</div>
+        </div>
+        <form class="composer" id="chatForm">
+          <textarea id="prompt" placeholder="Test the local SyMoNeuRaL LLM engine…"></textarea>
+          <button class="primary" type="submit">Send</button>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const messages = document.getElementById('messages');
+    const form = document.getElementById('chatForm');
+    const promptBox = document.getElementById('prompt');
+    const modelName = document.getElementById('modelName');
+    let model = 'local-model';
+    const history = [{ role: 'system', content: 'You are SyMoNeuRaL, a local AI engine.' }];
+
+    function add(role, text) {
+      const div = document.createElement('div');
+      div.className = 'msg ' + role;
+      div.textContent = text;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+      return div;
+    }
+
+    async function loadModel() {
+      try {
+        const res = await fetch('/v1/models');
+        const data = await res.json();
+        model = data?.data?.[0]?.id || model;
+        modelName.textContent = model;
+      } catch (err) {
+        modelName.textContent = 'engine reachable check failed';
+        modelName.className = 'value warn';
+      }
+    }
+
+    async function chat(prompt) {
+      const body = { model, messages: [...history, { role: 'user', content: prompt }], stream: false, temperature: 0.7 };
+      const res = await fetch('/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      return data?.choices?.[0]?.message?.content || JSON.stringify(data, null, 2);
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const text = promptBox.value.trim();
+      if (!text) return;
+      promptBox.value = '';
+      add('user', text);
+      const pending = add('assistant', 'Thinking…');
+      try {
+        const answer = await chat(text);
+        history.push({ role: 'user', content: text }, { role: 'assistant', content: answer });
+        pending.textContent = answer;
+      } catch (err) {
+        pending.textContent = 'Engine request failed: ' + (err?.message || err);
+        pending.classList.add('bad');
+      }
+    });
+
+    loadModel();
+  </script>
+</body>
+</html>

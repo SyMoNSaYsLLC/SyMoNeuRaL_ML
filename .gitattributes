@@ -16,3 +16,6 @@ data/iptv/** linguist-generated
 frontend/iptv.html linguist-language=HTML
 static/iptv.css linguist-language=CSS
 static/iptv.js linguist-language=JavaScript
+
+# SyMoNeuRaL-owned engine browser UI
+frontend/symon-llm-ui/** linguist-detectable
