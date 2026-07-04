@@ -1,0 +1,5 @@
+
+# External MATLAB tools migrated for SyMoNeuRaL MATLAB layer.
+# Project-owned wrappers under matlab/+symon still count as MATLAB.
+matlab/vendor/mathworks-llms-with-matlab/** linguist-vendored
+matlab/vendor/mathworks-image-classifier-app/** linguist-vendored
