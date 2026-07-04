@@ -1,0 +1,11 @@
+/.bin
+/cover.out
+/vendor
+/.env
+AGENTS.md
+CLAUDE.md
+.agents
+.claude
+*.swp
+*.swo
+matlab/matlab_mcp_toolbox/mcp/+matlab_mcp/

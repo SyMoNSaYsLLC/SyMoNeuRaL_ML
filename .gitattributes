@@ -3,3 +3,7 @@
 # Project-owned wrappers under matlab/+symon still count as MATLAB.
 matlab/vendor/mathworks-llms-with-matlab/** linguist-vendored
 matlab/vendor/mathworks-image-classifier-app/** linguist-vendored
+# External MATLAB MCP server and prompt library.
+matlab/vendor/mathworks-matlab-mcp-server/** linguist-vendored
+matlab/vendor/mathworks-ai-coding-prompts/** linguist-vendored
+bin/matlab-mcp-server linguist-generated
