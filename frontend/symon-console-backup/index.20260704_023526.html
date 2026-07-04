@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SyMoNeuRaL</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="app" data-sidebar="open">
+    <aside class="sidebar" id="sidebar">
+      <div class="sideTop">
+        <div class="brand">
+          <div class="mark">ϟ</div>
+          <div>
+            <strong>SyMoNeuRaL</strong>
+            <span>Local AI console</span>
+          </div>
+        </div>
+        <button class="iconBtn" id="collapseSidebar" title="Toggle sidebar">☰</button>
+      </div>
+
+      <button class="newChat" id="newChatBtn">＋ New chat</button>
+
+      <label class="searchWrap">
+        <span>Search</span>
+        <input id="chatSearch" type="search" placeholder="Search chats, MCP, prompts…" autocomplete="off" />
+      </label>
+
+      <section class="sideSection">
+        <div class="sectionHead">
+          <span>Chats</span>
+          <button class="miniBtn" id="clearChatsBtn" title="Clear local chat list">clear</button>
+        </div>
+        <div class="chatList" id="chatList"></div>
+      </section>
+
+      <section class="sideSection">
+        <div class="sectionHead"><span>MCP servers</span></div>
+        <div class="mcpList" id="mcpList"></div>
+      </section>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="iconBtn mobileOnly" id="mobileSidebarBtn" title="Sidebar">☰</button>
+        <div class="modelPicker">
+          <label for="modelSelect">Model</label>
+          <select id="modelSelect">
+            <option value="auto" selected>Auto / SyMoNeuRaL router</option>
+            <option value="writer">Writer</option>
+            <option value="code">Code</option>
+            <option value="image">Image</option>
+            <option value="helper">Helper</option>
+            <option value="manager">Manager</option>
+          </select>
+        </div>
+        <div class="topActions">
+          <button class="pill" id="promptsBtn">Prompts</button>
+          <button class="pill" id="toolsBtn">Tools</button>
+          <button class="pill" id="mcpBtn">MCP</button>
+          <button class="pill" id="settingsBtn">Settings</button>
+        </div>
+      </header>
+
+      <section class="messages" id="messages" aria-live="polite">
+        <div class="welcome" id="welcome">
+          <div class="welcomeLogo">ϟ</div>
+          <h1>What are we building?</h1>
+          <p>Use SyMoNeuRaL on <strong>127.0.0.1:8000</strong>. The engine test UI can stay on 8080, but this is the end-user console.</p>
+          <div class="quickGrid">
+            <button class="quickPrompt">Check the current local backend status</button>
+            <button class="quickPrompt">Plan the next repo migration step</button>
+            <button class="quickPrompt">Search my IPTV index for Canes games</button>
+            <button class="quickPrompt">Draft a Rust runtime module outline</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="controlStrip" id="controlStrip">
+        <button class="chip active" data-reasoning="auto">Reasoning: Auto</button>
+        <button class="chip" data-reasoning="low">Low</button>
+        <button class="chip" data-reasoning="medium">Medium</button>
+        <button class="chip" data-reasoning="high">High</button>
+        <button class="chip" id="attachBtn">＋ Files</button>
+        <button class="chip" id="addPromptBtn">＋ Prompt</button>
+        <button class="chip" id="addToolBtn">＋ Tool</button>
+        <button class="chip" id="addMcpBtn">＋ MCP server</button>
+      </section>
+
+      <form class="composer" id="chatForm">
+        <input id="fileInput" type="file" multiple hidden />
+        <div class="attachmentTray" id="attachmentTray"></div>
+        <div class="composeBox">
+          <textarea id="prompt" rows="1" placeholder="Message SyMoNeuRaL…"></textarea>
+          <button id="sendBtn" type="submit" title="Send">↑</button>
+        </div>
+        <div class="composeFooter">
+          <span id="routeHint">Auto routes chat/code/image/helper requests through the manager.</span>
+          <span id="tokenHint">Enter sends • Shift+Enter newline</span>
+        </div>
+      </form>
+    </main>
+
+    <aside class="drawer" id="drawer" aria-hidden="true">
+      <div class="drawerCard">
+        <div class="drawerHead">
+          <div>
+            <p id="drawerEyebrow">Panel</p>
+            <h2 id="drawerTitle">Settings</h2>
+          </div>
+          <button class="iconBtn" id="closeDrawer">×</button>
+        </div>
+        <div class="drawerBody" id="drawerBody"></div>
+      </div>
+    </aside>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

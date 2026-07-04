@@ -75,6 +75,11 @@ def create_app() -> FastAPI:
     def iptv_browser():
         return FileResponse(frontend_dir / "iptv.html")
 
+
+    # Serve the 8000 frontend as a static SPA so llama-ui assets like /_app/* work.
+    if frontend_dir.exists() and "frontend-root" not in [getattr(r, "name", None) for r in app.routes]:
+        app.mount("/", StaticFiles(directory=str(frontend_dir), html=True), name="frontend-root")
+
     return app
 
 
@@ -90,7 +95,7 @@ ROOT_DIR = Path(__file__).resolve().parents[1]
 FRONTEND_DIR = ROOT_DIR / "frontend"
 STATIC_DIR = ROOT_DIR / "static"
 
-if STATIC_DIR.exists() and "static" not in [r.name for r in app.routes]:
+if STATIC_DIR.exists() and "static" not in [getattr(r, "name", None) for r in app.routes]:
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 @app.get("/")
